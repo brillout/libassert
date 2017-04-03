@@ -3,12 +3,23 @@ module.exports = function(condition) {
         return;
     }
     var prod = is_prod();
-    var msg = 'Assertion-Error'+(prod?'[prod]':'[dev]')+': '+condition+'!=true';
+    var message = 'Assertion-Error'+(prod?'[prod]':'[dev]')+': '+condition+'!=true';
     var msgs = [].slice.call(arguments, 1);
     for(var i in msgs) {
-        msg += '\n'+msgs[i];
+        var msg = msgs[i];
+        var str;
+        if( ! msg ) {
+            str = msg;
+        } else {
+            str = msg.toString();
+            if( str === '[object Object]' || msg.constructor === Array ) {
+                str = JSON.stringify(msg, null, 2);
+            }
+        }
+        console.log(str);
+        message += '\n'+str;
     }
-    const error = new Error(msg);
+    const error = new Error(message);
     if( !prod ) {
         throw error;
     } else {

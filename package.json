@@ -1,6 +1,6 @@
 {
   "name": "assertion-soft",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Assert that doesn't stop execution in production",
   "repository": "github:brillout/assertion-soft",
   "main": "index.js"
