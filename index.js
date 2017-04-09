@@ -1,6 +1,6 @@
 module.exports = function(condition) {
     if( condition ) {
-        return;
+        return condition;
     }
     var prod = is_prod();
     var message = 'Assertion-Error'+(prod?'[prod]':'[dev]')+': '+condition+'!=true';
@@ -20,13 +20,14 @@ module.exports = function(condition) {
         message += '\n'+str;
     }
     const error = new Error(message);
-    if( !prod ) {
+    if( ! prod ) {
         throw error;
     } else {
         setTimeout(function() {
             throw error;
         }, 0);
     }
+    return condition;
 };
 
 function is_prod() {
