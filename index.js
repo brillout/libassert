@@ -13,7 +13,11 @@ module.exports = function(condition) {
         } else {
             str = msg.toString();
             if( str === '[object Object]' || msg.constructor === Array ) {
-                str = JSON.stringify(msg, null, 2);
+                try {
+                    str = JSON.stringify(msg, null, 2);
+                } catch(e) {
+                    str += ' ['+e+']';
+                }
             }
         }
         console.log(str);
