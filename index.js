@@ -1,8 +1,12 @@
-module.exports = function(condition) {
+module.exports = function(condition, opts) {
     if( condition ) {
         return condition;
     }
+
+    opts = opts || {};
+
     var prod = is_prod();
+
     var message = 'Assertion-Error'+(prod?'[prod]':'[dev]')+': '+condition+'!=true';
     var msgs = [].slice.call(arguments, 1);
     for(var i in msgs) {
@@ -24,13 +28,15 @@ module.exports = function(condition) {
         message += '\n'+str;
     }
     const error = new Error(message);
-    if( ! prod ) {
+
+    if( ! prod || opts.is_hard ) {
         throw error;
     } else {
         setTimeout(function() {
             throw error;
         }, 0);
     }
+
     return condition;
 };
 
