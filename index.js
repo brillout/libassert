@@ -1,14 +1,41 @@
-module.exports = function(condition, opts) {
+module.exports = function(condition) {
+
+    // assert
     if( condition ) {
         return condition;
     }
 
-    opts = opts || {};
 
+    // parse arguments
+    var msgs = [];
+    var opts = {};
+    var args = [].slice.call(arguments, 1);
+    for(var i in args) {
+        var arg = args[i];
+        var is_option_arg = false;
+        for(j in arg) {
+            is_option_arg = !!option_keys[j]
+            if( ! is_option_arg ) {
+                break;
+            }
+        }
+        if( is_option_arg ) {
+            for(j in arg) {
+                if( !option_keys[j] ) throw new Error('assertion-soft: [Internal Error]: something went wrong parsing option arguments');
+                opts[j] = arg[j];
+            }
+        } else {
+            msgs.push(arg);
+        }
+    }
+
+
+    // determine whether we are in production
     var prod = is_prod();
 
+
+    // build message
     var message = 'Assertion-Error'+(prod?'[prod]':'[dev]')+': '+condition+'!=true';
-    var msgs = [].slice.call(arguments, 1);
     for(var i in msgs) {
         var msg = msgs[i];
         var str;
@@ -29,7 +56,9 @@ module.exports = function(condition, opts) {
     }
     const error = new Error(message);
 
-    if( ! prod || opts.is_hard ) {
+
+    // throw logic
+    if( ! prod || opts[option_keys.is_hard] ) {
         throw error;
     } else {
         setTimeout(function() {
@@ -37,11 +66,19 @@ module.exports = function(condition, opts) {
         }, 0);
     }
 
+
+    // convenience to write code like `if( ! require('assertion-soft')(condition) ) return;`
     return condition;
 };
+
 
 function is_prod() {
     var prod_browser = typeof window !== "undefined" && window.location.hostname !== 'localhost';
     var prod_nodejs = typeof process !== "undefined" && process.env['NODE_ENV'] === 'production';
     return prod_browser || prod_nodejs;
 }
+
+
+var option_keys = {
+    is_hard: 'is_hard',
+};
