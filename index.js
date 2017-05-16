@@ -38,12 +38,14 @@ module.exports = function(condition) {
     var message = 'Assertion-Error'+(prod?'[prod]':'[dev]')+': '+condition+'!=true';
     for(var i in msgs) {
         var msg = msgs[i];
+        console.log(msg);
         var str;
-        if( ! msg ) {
+        if( !msg ) {
             str = msg;
         } else {
             str = msg.toString();
-            if( str === '[object Object]' || msg.constructor === Array ) {
+            const PREFIX = '[object ';
+            if( str.slice(0, PREFIX.length) === PREFIX || msg.constructor === Array ) {
                 try {
                     str = JSON.stringify(msg, null, 2);
                 } catch(e) {
@@ -51,14 +53,13 @@ module.exports = function(condition) {
                 }
             }
         }
-        console.log(str);
         message += '\n'+str;
     }
     const error = new Error(message);
 
 
     // throw logic
-    if( ! prod || opts[option_keys.is_hard] ) {
+    if( (! prod || opts[option_keys.is_hard]) && !opts[option_keys.is_soft] ) {
         throw error;
     } else {
         setTimeout(function() {
@@ -81,4 +82,5 @@ function is_prod() {
 
 var option_keys = {
     is_hard: 'is_hard',
+    is_soft: 'is_soft',
 };
