@@ -1,3 +1,5 @@
+var logify_input = require('./log').logify_input;
+
 module.exports = function(condition) {
 
     // assert
@@ -39,20 +41,7 @@ module.exports = function(condition) {
     for(var i in msgs) {
         var msg = msgs[i];
         console.log(msg);
-        var str;
-        if( !msg ) {
-            str = msg;
-        } else {
-            str = msg.toString();
-            const PREFIX = '[object ';
-            if( str.slice(0, PREFIX.length) === PREFIX || msg.constructor === Array ) {
-                try {
-                    str = JSON.stringify(msg, null, 2);
-                } catch(e) {
-                    str += ' ['+e+']';
-                }
-            }
-        }
+        var str = logify_input(msg);
         message += '\n'+str;
     }
     const error = new Error(message);
