@@ -40,15 +40,17 @@ module.exports = function(condition) {
     var message = 'Assertion-Error'+(prod?'[prod]':'[dev]')+': '+condition+'!=true';
     for(var i in msgs) {
         var msg = msgs[i];
-        console.log(msg);
+        console.error(msg);
         var str = logify_input(msg);
         message += '\n'+str;
     }
-    const error = new Error(message);
+    var error = new Error(message);
+    console.error(message);
 
 
     // throw logic
-    if( (! prod || opts[option_keys.is_hard]) && !opts[option_keys.is_soft] ) {
+    var throw_now = (! prod || opts[option_keys.is_hard]) && !opts[option_keys.is_soft];
+    if( throw_now ) {
         throw error;
     } else {
         setTimeout(function() {
