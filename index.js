@@ -36,16 +36,22 @@ module.exports = function(condition) {
     var prod = is_prod();
 
 
+    var is_browser = typeof window !== "undefined";
+
     // build message
     var message = 'Assertion-Error'+(prod?'[prod]':'[dev]')+': '+condition+'!=true';
     for(var i in msgs) {
         var msg = msgs[i];
-        console.error(msg);
+        if( is_browser ) {
+            console.error(msg);
+        }
         var str = logify_input(msg);
         message += '\n'+str;
     }
     var error = new Error(message);
-    console.error(message);
+    if( is_browser ) {
+        console.error(message);
+    }
 
 
     // throw logic
