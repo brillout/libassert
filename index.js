@@ -42,16 +42,13 @@ module.exports = function(condition) {
     var message = 'Assertion-Error'+(prod?'[prod]':'[dev]')+': '+condition+'!=true';
     for(var i in msgs) {
         var msg = msgs[i];
-        if( is_browser ) {
+        if( is_browser && msg instanceof Object ) {
             console.error(msg);
         }
         var str = logify_input(msg);
         message += '\n'+str;
     }
     var error = new Error(message);
-    if( is_browser ) {
-        console.error(message);
-    }
 
 
     // throw logic
