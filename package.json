@@ -1,7 +1,7 @@
 {
-  "name": "assertion-soft",
-  "version": "0.1.12",
-  "description": "Assert that doesn't stop execution in production",
-  "repository": "github:brillout/assertion-soft",
+  "name": "reassert",
+  "version": "1.0.0",
+  "description": "Assert lib with lots of features but with minimalism in mind",
+  "repository": "github:brillout/reassert",
   "main": "index.js"
 }

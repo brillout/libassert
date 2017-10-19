@@ -23,7 +23,7 @@ module.exports = function(condition) {
         }
         if( is_option_arg ) {
             for(j in arg) {
-                if( !option_keys[j] ) throw new Error('assertion-soft: [Internal Error]: something went wrong parsing option arguments');
+                if( !option_keys[j] ) throw new Error('reassert: [Internal Error]: something went wrong parsing option arguments');
                 opts[j] = arg[j];
             }
         } else {
@@ -62,7 +62,7 @@ module.exports = function(condition) {
     }
 
 
-    // convenience to write code like `if( ! require('assertion-soft')(condition) ) return;`
+    // convenience to write code like `if( ! require('reassert')(condition) ) return;`
     return condition;
 };
 
