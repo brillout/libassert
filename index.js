@@ -15,14 +15,14 @@ module.exports = function(condition) {
     for(var i in args) {
         var arg = args[i];
         var is_option_arg = false;
-        for(j in arg) {
+        for(var j in arg) {
             is_option_arg = !!option_keys[j]
             if( ! is_option_arg ) {
                 break;
             }
         }
         if( is_option_arg ) {
-            for(j in arg) {
+            for(var j in arg) {
                 if( !option_keys[j] ) throw new Error('reassert: [Internal Error]: something went wrong parsing option arguments');
                 opts[j] = arg[j];
             }
