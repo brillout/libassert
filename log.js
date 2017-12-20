@@ -32,7 +32,7 @@ function logify_input(input) {
 }
 
 function stringify_object(obj) {
-    add_json_function_handlers(obj);
+    add_custom_stringifiers(obj);
     try {
         return JSON.stringify(obj, null, 2);
     } catch(e) {
@@ -40,18 +40,35 @@ function stringify_object(obj) {
     }
 }
 
-function add_json_function_handlers(obj) {
+function add_custom_stringifiers(obj) {
     for(var key in obj) {
-        var el = obj[key];
-        if( el instanceof Function ) {
+        let el = obj[key];
+        if( el instanceof RegExp ) {
             if( ! el.toJSON ) {
-                let str = '['+(el.name||'Anonymous function')+']'+stringification_name;
                 el.toJSON = function() {
+                    var str = '[RegExp: '+el.toString()+']';
                     return str;
                 };
             }
-        } else if( el instanceof Object ) {
-            add_json_function_handlers(el);
+            return;
+        }
+        if( el instanceof Function ) {
+            if( ! el.toJSON ) {
+                el.toJSON = function() {
+                    var str = (
+                        ! el.name ? (
+                            '[Function]'
+                        ) : (
+                            '[Function: '+el.name+']'
+                        )
+                    );
+                    return str;
+                };
+            }
+            return;
+        }
+        if( el instanceof Object ) {
+            add_custom_stringifiers(el);
         }
     }
 }
