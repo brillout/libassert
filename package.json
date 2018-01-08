@@ -1,6 +1,6 @@
 {
   "name": "reassert",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Assert lib with lots of features but with minimalism in mind",
   "repository": "github:brillout/reassert",
   "main": "index.js"

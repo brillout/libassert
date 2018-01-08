@@ -32,25 +32,46 @@ function logify_input(input) {
 }
 
 function stringify_object(obj) {
-    add_custom_stringifiers(obj);
+    const obj_copy = get_pretty_string_version(obj);
     try {
-        return JSON.stringify(obj, null, 2);
+        return JSON.stringify(obj_copy, null, 2);
     } catch(e) {
-        return obj.toString()+'['+e+'][Error]'+stringification_name;
+        return obj_copy.toString()+'['+e+'][Error]'+stringification_name;
     }
 }
 
-function add_custom_stringifiers(obj) {
+function get_pretty_string_version(obj) {
+    const obj_copy = {};
     for(var key in obj) {
-        let el = obj[key];
+        /*
+        const descriptor = Object.getOwnPropertyDescriptor(obj, key);
+        const descriptor_str = (
+            ! descriptor || ! descriptor.get ? (
+                ''
+            ) : (
+                [
+                    '[Descriptor Getter',
+                    descriptor.get.name ? ': ' : '',
+                    descriptor.get.name || '',
+                    ']',
+                ].join('')
+            )
+        );
+        */
+        const descriptor_str = '';
+        let el = obj_copy[key] = obj[key];
+        if( ! (el instanceof Object) ) {
+            obj_copy[key] = (el+'')+descriptor_str;
+            continue;
+        }
         if( el instanceof RegExp ) {
             if( ! el.toJSON ) {
                 el.toJSON = function() {
                     var str = '[RegExp: '+el.toString()+']';
-                    return str;
+                    return str+descriptor_str;
                 };
             }
-            return;
+            continue;
         }
         if( el instanceof Function ) {
             if( ! el.toJSON ) {
@@ -62,13 +83,14 @@ function add_custom_stringifiers(obj) {
                             '[Function: '+el.name+']'
                         )
                     );
-                    return str;
+                    return str+descriptor_str;
                 };
             }
-            return;
+            continue;
         }
         if( el instanceof Object ) {
-            add_custom_stringifiers(el);
+            obj_copy[key] = get_pretty_string_version(el);
         }
     }
+    return obj_copy;
 }
