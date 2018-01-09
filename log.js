@@ -32,7 +32,7 @@ function logify_input(input) {
 }
 
 function stringify_object(obj) {
-    const obj_copy = get_pretty_string_version(obj);
+    const obj_copy = get_copy_with_prettier_stringify(obj);
     try {
         return JSON.stringify(obj_copy, null, 2);
     } catch(e) {
@@ -40,41 +40,42 @@ function stringify_object(obj) {
     }
 }
 
-function get_pretty_string_version(obj) {
-    const obj_copy = {};
-    for(var key in obj) {
-        let el = obj_copy[key] = obj[key];
-        if( ! (el instanceof Object) ) {
-            obj_copy[key] = el+'';
-            continue;
-        }
-        if( el instanceof RegExp ) {
-            if( ! el.toJSON ) {
-                el.toJSON = function() {
-                    var str = '[RegExp: '+el.toString()+']';
-                    return str;
-                };
-            }
-            continue;
-        }
-        if( el instanceof Function ) {
-            if( ! el.toJSON ) {
-                el.toJSON = function() {
-                    var str = (
-                        ! el.name ? (
-                            '[Function]'
-                        ) : (
-                            '[Function: '+el.name+']'
-                        )
-                    );
-                    return str;
-                };
-            }
-            continue;
-        }
-        if( el instanceof Object ) {
-            obj_copy[key] = get_pretty_string_version(el);
-        }
+function get_copy_with_prettier_stringify(el) {
+    if( ! (el instanceof Object) ) {
+        return el;
     }
-    return obj_copy;
+    if( el instanceof RegExp ) {
+        if( ! el.toJSON ) {
+            el.toJSON = function() {
+                var str = '[RegExp: '+el.toString()+']';
+                return str;
+            };
+        }
+        return el;
+    }
+    if( el instanceof Function ) {
+        if( ! el.toJSON ) {
+            el.toJSON = function() {
+                var str = (
+                    ! el.name ? (
+                        '[Function]'
+                    ) : (
+                        '[Function: '+el.name+']'
+                    )
+                );
+                return str;
+            };
+        }
+        return el;
+    }
+
+    if( el.constructor === Object || el.constructor === Array ) {
+        const el_copy = new (el.constructor);
+        for(var key in el) {
+            el_copy[key] = get_copy_with_prettier_stringify(el[key]);
+        }
+        return el_copy;
+    }
+
+    return el;
 }
