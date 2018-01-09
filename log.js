@@ -43,32 +43,16 @@ function stringify_object(obj) {
 function get_pretty_string_version(obj) {
     const obj_copy = {};
     for(var key in obj) {
-        /*
-        const descriptor = Object.getOwnPropertyDescriptor(obj, key);
-        const descriptor_str = (
-            ! descriptor || ! descriptor.get ? (
-                ''
-            ) : (
-                [
-                    '[Descriptor Getter',
-                    descriptor.get.name ? ': ' : '',
-                    descriptor.get.name || '',
-                    ']',
-                ].join('')
-            )
-        );
-        */
-        const descriptor_str = '';
         let el = obj_copy[key] = obj[key];
         if( ! (el instanceof Object) ) {
-            obj_copy[key] = (el+'')+descriptor_str;
+            obj_copy[key] = el+'';
             continue;
         }
         if( el instanceof RegExp ) {
             if( ! el.toJSON ) {
                 el.toJSON = function() {
                     var str = '[RegExp: '+el.toString()+']';
-                    return str+descriptor_str;
+                    return str;
                 };
             }
             continue;
@@ -83,7 +67,7 @@ function get_pretty_string_version(obj) {
                             '[Function: '+el.name+']'
                         )
                     );
-                    return str+descriptor_str;
+                    return str;
                 };
             }
             continue;
