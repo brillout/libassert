@@ -23,7 +23,10 @@ module.exports = function(condition) {
         }
         if( is_option_arg ) {
             for(var j in arg) {
-                if( !option_keys[j] ) throw new Error('reassert: [Internal Error]: something went wrong parsing option arguments');
+                if( !option_keys[j] ) {
+                    var msg = 'Unkonwn option `'+j+'`';
+                    throw new Error('Reassert: [Internal Error]: '+msg);
+                }
                 opts[j] = arg[j];
             }
         } else {
@@ -52,7 +55,7 @@ module.exports = function(condition) {
 
 
     // throw logic
-    var throw_now = (! prod || opts[option_keys.is_hard]) && !opts[option_keys.is_soft];
+    var throw_now = ! prod || opts[option_keys.is_hard] || ! opts[option_keys.is_soft];
     if( throw_now ) {
         throw error;
     } else {
