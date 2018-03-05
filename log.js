@@ -41,11 +41,9 @@ function stringify_object(obj) {
 }
 
 function get_prettier_copy(el) {
-    const sameCatcher = new WeakMap();
+    return traverse(el, parent_objects=[]);
 
-    return traverse(el, sameCatcher);
-
-    function traverse(el, sameCatcher) {
+    function traverse(el, parent_objects=[]) {
         if( ! (el instanceof Object) ) {
             return el;
         }
@@ -79,14 +77,14 @@ function get_prettier_copy(el) {
             return el;
         }
 
-        if( sameCatcher.has(el) ) {
+        if( parent_objects.includes(el) ) {
             return '[ALREADY_PRINTED_COPY]';
         }
-        sameCatcher.set(el, true);
+        parent_objects = [el, ...parent_objects];
 
         const el_copy = new (el.constructor);
         for(var key in el) {
-            el_copy[key] = traverse(el[key], sameCatcher);
+            el_copy[key] = traverse(el[key], parent_objects);
         }
         return el_copy;
     }
