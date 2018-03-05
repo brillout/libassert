@@ -32,7 +32,7 @@ function logify_input(input) {
 }
 
 function stringify_object(obj) {
-    const obj_copy = get_copy_with_prettier_stringify(obj);
+    const obj_copy = get_prettier_copy(obj);
     try {
         return JSON.stringify(obj_copy, null, 2);
     } catch(e) {
@@ -40,42 +40,54 @@ function stringify_object(obj) {
     }
 }
 
-function get_copy_with_prettier_stringify(el) {
-    if( ! (el instanceof Object) ) {
-        return el;
-    }
-    if( el instanceof RegExp ) {
-        if( ! el.toJSON ) {
-            el.toJSON = function() {
-                var str = '[RegExp: '+el.toString()+']';
-                return str;
-            };
-        }
-        return el;
-    }
-    if( el instanceof Function ) {
-        if( ! el.toJSON ) {
-            el.toJSON = function() {
-                var str = (
-                    ! el.name ? (
-                        '[Function]'
-                    ) : (
-                        '[Function: '+el.name+']'
-                    )
-                );
-                return str;
-            };
-        }
-        return el;
-    }
+function get_prettier_copy(el) {
+    const cycleCatcher = new WeakMap();
 
-    if( el.constructor === Object || el.constructor === Array ) {
+    return traverse(el, cycleCatcher);
+
+    function traverse(el, cycleCatcher) {
+        if( ! (el instanceof Object) ) {
+            return el;
+        }
+
+        if( el instanceof RegExp ) {
+            if( ! el.toJSON ) {
+                el.toJSON = function() {
+                    var str = '[RegExp: '+el.toString()+']';
+                    return str;
+                };
+            }
+            return el;
+        }
+        if( el instanceof Function ) {
+            if( ! el.toJSON ) {
+                el.toJSON = function() {
+                    var str = (
+                        ! el.name ? (
+                            '[Function]'
+                        ) : (
+                            '[Function: '+el.name+']'
+                        )
+                    );
+                    return str;
+                };
+            }
+            return el;
+        }
+
+        if( el.constructor !== Object && el.constructor !== Array ) {
+            return el;
+        }
+
+        if( cycleCatcher.has(el) ) {
+            return '[ALREADY_PRINTED_COPY]';
+        }
+        cycleCatcher.set(el, true);
+
         const el_copy = new (el.constructor);
         for(var key in el) {
-            el_copy[key] = get_copy_with_prettier_stringify(el[key]);
+            el_copy[key] = traverse(el[key], cycleCatcher);
         }
         return el_copy;
     }
-
-    return el;
 }
