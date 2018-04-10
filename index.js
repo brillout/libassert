@@ -39,13 +39,11 @@ module.exports = function(condition) {
     var prod = is_prod();
 
 
-    var is_browser = typeof window !== "undefined";
-
     // build message
     var message = 'Assertion-Error'+(prod?'[prod]':'[dev]')+': '+condition+'!=true';
     for(var i in msgs) {
         var msg = msgs[i];
-        if( is_browser && msg instanceof Object ) {
+        if( is_browser() && msg instanceof Object ) {
             console.error(msg);
         }
         var str = logify_input(msg);
@@ -55,13 +53,18 @@ module.exports = function(condition) {
 
 
     // throw logic
-    var throw_now = ! prod || opts[option_keys.is_hard] || ! opts[option_keys.is_soft];
+    var throw_now = (!prod || opts[option_keys.is_hard]) && !opts[option_keys.is_soft];
+    console.log('t',throw_now);
     if( throw_now ) {
         throw error;
     } else {
-        setTimeout(function() {
-            throw error;
-        }, 0);
+        if( is_browser() ) {
+            setTimeout(function() {
+                throw error;
+            }, 0);
+        } else {
+            console.error(error);
+        }
     }
 
 
@@ -71,9 +74,17 @@ module.exports = function(condition) {
 
 
 function is_prod() {
-    var prod_browser = typeof window !== "undefined" && window.location.hostname !== 'localhost';
-    var prod_nodejs = typeof process !== "undefined" && process.env['NODE_ENV'] === 'production';
+    var prod_browser = is_browser() && window.location.hostname !== 'localhost';
+    var prod_nodejs = is_nodejs() && process.env['NODE_ENV'] === 'production';
     return prod_browser || prod_nodejs;
+}
+
+function is_browser() {
+    return typeof window !== "undefined";
+}
+
+function is_nodejs() {
+    return typeof process !== "undefined";
 }
 
 
