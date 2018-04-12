@@ -54,7 +54,6 @@ module.exports = function(condition) {
 
     // throw logic
     var throw_now = (!prod || opts[option_keys.is_hard]) && !opts[option_keys.is_soft];
-    console.log('t',throw_now);
     if( throw_now ) {
         throw error;
     } else {
