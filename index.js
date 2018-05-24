@@ -1,25 +1,44 @@
 var logify_input = require('./log').logify_input;
+var titleFormat = require('@brillout/format-text').titleFormat;
 
 var option_keys = {
     is_warning_error: 'is_warning_error',
-    is_wrong_usage_error: 'is_wrong_usage',
+    is_wrong_usage_error: 'is_wrong_usage_error',
     is_internal_error: 'is_internal_error'
 };
 
 module.exports = reassert;
 
 function reassert(condition) {
-
     // assert
     if( condition ) {
         return condition;
     }
 
-
     // parse arguments
+    var parsed = parseArguments([].slice.call(arguments, 1));
+    var msgs = parsed.msgs;
+    var opts = parsed.opts;
+
+    // build error message
+    var message = getErrorMessage(condition, msgs, opts);
+
+    // build error
+    var error = new Error(message);
+    if( is_nodejs() ) {
+        error.stack = '';
+    }
+
+    // throw logic
+    choke(error, opts);
+
+    // convenience to write code like `if( ! require('reassert/soft')(condition) ) return;`
+    return condition;
+}
+
+function parseArguments(args) {
     var msgs = [];
     var opts = {};
-    var args = [].slice.call(arguments, 1);
     for(var i in args) {
         var arg = args[i];
         var is_option_arg = false;
@@ -42,21 +61,7 @@ function reassert(condition) {
         }
     }
 
-
-    // build error message
-    var message = getErrorMessage(condition, msgs, opts);
-
-    // build error
-    var error = new Error(message);
-    if( is_nodejs() ) {
-        error.stack = '';
-    }
-
-    // throw logic
-    choke(error, opts);
-
-    // convenience to write code like `if( ! require('reassert/soft')(condition) ) return;`
-    return condition;
+    return {msgs: msgs, opts: opts};
 }
 
 function getErrorMessage(condition, msgs, opts) {
@@ -65,23 +70,24 @@ function getErrorMessage(condition, msgs, opts) {
     var title = (
         opts[option_keys.is_warning_error] && 'Warning' ||
         opts[option_keys.is_wrong_usage_error] && 'Wrong Usage' ||
+        opts[option_keys.is_internal_error] && 'Internal Error' ||
         'Assertion Fail'
     );
 
-    var message = '';
+    var message = [];
 
-    message += '\n\n';
+    message.push('\n');
 
-    message += createTitle('Stack Trace');
+    message.push(titleFormat('Stack Trace'));
 
-    message += stack;
+    message.push(stack);
 
-    message += '\n\n';
+    message.push('\n');
 
-    message += createTitle(title);
+    message.push(titleFormat(title));
 
     if( msgs.length===0 ) {
-        message += 'Failed assertion condition: `'+condition+' != true`';
+        message.push('Failed assertion condition: `'+condition+' != true`');
     }
 
     for(var i in msgs) {
@@ -91,26 +97,12 @@ function getErrorMessage(condition, msgs, opts) {
         }
         var str = logify_input(msg);
 
-        if( i!==0 ) {
-            message += '\n';
-        }
-        message += str;
+        message.push(str);
     }
 
-    message += '\n\n';
+    message.push('\n');
 
-    return message;
-}
-
-function createTitle(text) {
-    var bar = '***************************'+'\n';
-    var title = '';
-
-    title += bar
-    title += '******* ' + text + ' ******'+'\n';
-    title += bar;
-
-    return title;
+    return message.join('\n');
 }
 
 function choke(error, opts) {
