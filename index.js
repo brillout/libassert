@@ -122,16 +122,26 @@ function choke(error, opts) {
 }
 
 function getStack() {
+    var stackTraceLimit__original = Error.stackTraceLimit;
+    Error.stackTraceLimit = Infinity;
     var stack = new Error().stack;
+    Error.stackTraceLimit = stackTraceLimit__original;
 
     var lines = stack.split('\n');
 
     var lines__filtered = [];
     for(var i in lines) {
         var line = lines[i];
-        if( line!=='Error' && line.indexOf('/node_modules/reassert/') === -1 ) {
-            lines__filtered.push(line.replace(/^ */, ''));
+        if( line === 'Error' ) {
+            continue;
         }
+        if( line.indexOf('/node_modules/reassert/') !== -1 ) {
+            continue;
+        }
+        if( line.indexOf(' (internal/') !== -1 ) {
+            continue;
+        }
+        lines__filtered.push(line.replace(/^ */, ''));
     }
 
     return lines__filtered.join('\n');
