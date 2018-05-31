@@ -2,6 +2,9 @@ var assert = require('./');
 
 module.exports = function() {
     var args = [].slice.call(arguments);
-    args.push({is_warning_error: true});
+    args.push({
+        IS_REASSERT_OPTS: true,
+        is_warning: true,
+    });
     return assert.apply(this, args);
 };

@@ -2,9 +2,10 @@ var logify_input = require('./log').logify_input;
 var titleFormat = require('@brillout/format-text').titleFormat;
 
 var option_keys = {
-    is_warning_error: 'is_warning_error',
-    is_wrong_usage_error: 'is_wrong_usage_error',
-    is_internal_error: 'is_internal_error'
+    is_warning: 'is_warning',
+    is_usage: 'is_usage',
+    is_internal: 'is_internal',
+    details: 'details',
 };
 
 module.exports = reassert;
@@ -41,16 +42,10 @@ function parseArguments(args) {
     var opts = {};
     for(var i in args) {
         var arg = args[i];
-        var is_option_arg = false;
-        for(var j in arg) {
-            is_option_arg = !!option_keys[j]
-            if( ! is_option_arg ) {
-                break;
-            }
-        }
+        var is_option_arg = arg && arg.IS_REASSERT_OPTS;
         if( is_option_arg ) {
             for(var j in arg) {
-                if( !option_keys[j] ) {
+                if( !option_keys[j] && j!=='IS_REASSERT_OPTS' ) {
                     var msg = 'Unkonwn option `'+j+'`';
                     throw new Error('Reassert: [Internal Error]: '+msg);
                 }
@@ -65,24 +60,27 @@ function parseArguments(args) {
 }
 
 function getErrorMessage(condition, msgs, opts) {
-    var stack = getStack();
-
-    var title = (
-        opts[option_keys.is_warning_error] && 'Warning' ||
-        opts[option_keys.is_wrong_usage_error] && 'Wrong Usage' ||
-        opts[option_keys.is_internal_error] && 'Internal Error' ||
-        'Assertion Fail'
-    );
-
     var message = [];
 
     message.push('\n');
 
-    message.push(titleFormat('Stack Trace'));
+    message = message.concat(getErrorDetailsMessage(opts));
 
-    message.push(stack);
+    message = message.concat(getStackMessage());
 
-    message.push('\n');
+    message = message.concat(getErrorSummaryMessage(condition, msgs, opts));
+
+    return message.join('\n');
+}
+function getErrorSummaryMessage(condition, msgs, opts) {
+    let message = [];
+
+    var title = (
+        opts[option_keys.is_warning] && 'Warning' ||
+        opts[option_keys.is_usage] && 'Wrong Usage' ||
+        opts[option_keys.is_internal] && 'Internal Error' ||
+        'Assertion Fail'
+    );
 
     message.push(titleFormat(title));
 
@@ -100,13 +98,43 @@ function getErrorMessage(condition, msgs, opts) {
         message.push(str);
     }
 
+    if( opts.details ) {
+        message.push('');
+        message.push('See "Error Details" above for more information.');
+    }
+
     message.push('\n');
 
-    return message.join('\n');
+    return message;
+}
+function getStackMessage() {
+    var stack = getStack();
+    return [
+        titleFormat('Stack Trace'),
+        stack,
+        '\n'
+    ];
+}
+function getErrorDetailsMessage(opts) {
+    if( ! opts.details ) {
+        return [];
+    }
+
+    var message = [
+        titleFormat('Error Details')
+    ];
+
+    for(var i in opts.details) {
+        message.push(logify_input(opts.details[i]));
+    }
+
+    message.push('\n');
+
+    return message;
 }
 
 function choke(error, opts) {
-    var throw_now = !opts[option_keys.is_warning_error];
+    var throw_now = !opts[option_keys.is_warning];
     if( throw_now ) {
         throw error;
     } else {
