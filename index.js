@@ -24,14 +24,8 @@ function reassert(condition) {
     // build error message
     var message = getErrorMessage(condition, msgs, opts);
 
-    // build error
-    var error = new Error(message);
-    if( is_nodejs() ) {
-        error.stack = '';
-    }
-
     // throw logic
-    choke(error, opts);
+    throwError(message, opts);
 
     // convenience to write code like `if( ! require('reassert/soft')(condition) ) return;`
     return condition;
@@ -133,20 +127,26 @@ function getErrorDetailsMessage(opts) {
     return message;
 }
 
-function choke(error, opts) {
+function throwError(message, opts) {
     var throw_now = !opts[option_keys.is_warning];
-    if( throw_now ) {
-        throw error;
-    } else {
-        if( is_browser() ) {
-            setTimeout(function() {
-                throw error;
-            }, 0);
-        } else {
-            console.error(error);
+
+    if( is_nodejs() ) {
+        console.error(message);
+        if( throw_now ) {
+            var err = new Error();
+            err.stack = '';
+            throw err;
         }
     }
-
+    if( is_browser() ) {
+        if( throw_now ) {
+            throw new Error(message);
+        } else {
+            setTimeout(function() {
+                throw new Error(message);
+            }, 0);
+        }
+    }
 }
 
 function getStack() {
