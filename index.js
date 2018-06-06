@@ -64,7 +64,7 @@ function getErrorMessage(condition, msgs, opts) {
 
     message = message.concat(getErrorSummaryMessage(condition, msgs, opts));
 
-    return message.join('\n');
+    return message;
 }
 function getErrorSummaryMessage(condition, msgs, opts) {
     let message = [];
@@ -84,9 +84,6 @@ function getErrorSummaryMessage(condition, msgs, opts) {
 
     for(var i in msgs) {
         var msg = msgs[i];
-        if( is_browser() && msg instanceof Object ) {
-            console.error(msg);
-        }
         var str = logify_input(msg);
 
         message.push(str);
@@ -128,22 +125,26 @@ function getErrorDetailsMessage(opts) {
 }
 
 function throwError(message, opts) {
+    for(var i in message) {
+        console.error(message[i]);
+    }
+
     var throw_now = !opts[option_keys.is_warning];
 
     if( is_nodejs() ) {
-        console.error(message);
         if( throw_now ) {
             var err = new Error();
             err.stack = '';
             throw err;
         }
     }
+
     if( is_browser() ) {
         if( throw_now ) {
-            throw new Error(message);
+            throw new Error();
         } else {
             setTimeout(function() {
-                throw new Error(message);
+                throw new Error();
             }, 0);
         }
     }
