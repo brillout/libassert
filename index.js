@@ -56,13 +56,13 @@ function parseArguments(args) {
 function getErrorMessage(condition, msgs, opts) {
     var message = [];
 
-    message.push('\n');
-
     message = message.concat(getErrorDetailsMessage(opts));
 
-    message = message.concat(getStackMessage());
+    message = message.concat(getStackMessage(opts));
 
     message = message.concat(getErrorSummaryMessage(condition, msgs, opts));
+
+    message.push('');
 
     return message;
 }
@@ -94,11 +94,12 @@ function getErrorSummaryMessage(condition, msgs, opts) {
         message.push('See "Error Details" above for more information.');
     }
 
-    message.push('\n');
-
     return message;
 }
-function getStackMessage() {
+function getStackMessage(opts) {
+    if( opts[option_keys.is_warning] ) {
+        return [];
+    }
     var stack = getStack();
     return [
         titleFormat('Stack Trace'),
