@@ -21,11 +21,13 @@ function reassert(condition) {
     var msgs = parsed.msgs;
     var opts = parsed.opts;
 
+    var callStack = getCallStack();
+
     // build error message
-    var message = getErrorMessage(condition, msgs, opts);
+    var message = getErrorMessage(condition, msgs, opts, callStack);
 
     // throw logic
-    throwError(message, opts);
+    throwError(message, opts, callStack);
 
     // convenience to write code like `if( ! require('reassert/soft')(condition) ) return;`
     return condition;
@@ -53,12 +55,14 @@ function parseArguments(args) {
     return {msgs: msgs, opts: opts};
 }
 
-function getErrorMessage(condition, msgs, opts) {
+function getErrorMessage(condition, msgs, opts, callStack) {
     var message = [];
 
     message = message.concat(getErrorDetailsMessage(opts));
 
-    message = message.concat(getStackMessage(opts));
+    if( ! is_browser() ) {
+        message = message.concat(getStackMessage(opts, callStack));
+    }
 
     message = message.concat(getErrorSummaryMessage(condition, msgs, opts));
 
@@ -96,14 +100,13 @@ function getErrorSummaryMessage(condition, msgs, opts) {
 
     return message;
 }
-function getStackMessage(opts) {
+function getStackMessage(opts, callStack) {
     if( opts[option_keys.is_warning] ) {
         return [];
     }
-    var stack = getStack();
     return [
         titleFormat('Stack Trace'),
-        stack,
+        callStack.join('\n'),
         '\n'
     ];
 }
@@ -125,39 +128,43 @@ function getErrorDetailsMessage(opts) {
     return message;
 }
 
-function throwError(message, opts) {
-    for(var i in message) {
-        console.error(message[i]);
-    }
-
-    var throw_now = !opts[option_keys.is_warning];
+function throwError(message, opts, callStack) {
+    var interupt_execution = !opts[option_keys.is_warning];
 
     if( is_nodejs() ) {
-        if( throw_now ) {
+        if( interupt_execution ) {
             var err = new Error();
-            err.stack = '';
+            err.stack = '\n\n'+message.join('\n');
             throw err;
+        } else {
+            for(var i in message) console.error(message[i]);
         }
     }
 
     if( is_browser() ) {
-        if( throw_now ) {
-            throw new Error();
+        if( interupt_execution ) {
+            throw__browser(message);
         } else {
             setTimeout(function() {
-                throw new Error();
+                throw__browser(message);
             }, 0);
         }
     }
 }
 
-function getStack() {
+function throw__browser(message) {
+    for(var i in message) console.error(message[i]);
+    Error.stackTraceLimit = Infinity;
+    throw new Error(message.join('\n'));
+}
+
+function getCallStack() {
     var stackTraceLimit__original = Error.stackTraceLimit;
     Error.stackTraceLimit = Infinity;
-    var stack = new Error().stack;
+    var callStackString = new Error().stack;
     Error.stackTraceLimit = stackTraceLimit__original;
 
-    var lines = stack.split('\n');
+    var lines = callStackString.split('\n');
 
     var lines__filtered = [];
     for(var i in lines) {
@@ -174,7 +181,8 @@ function getStack() {
         lines__filtered.push(line.replace(/^ */, ''));
     }
 
-    return lines__filtered.join('\n');
+    var callStack = lines__filtered;
+    return callStack;
 }
 
 /* TODO - reimplement soft errors
@@ -183,7 +191,7 @@ function getStack() {
     var prod = is_prod();
 
     var message = 'Assertion-Error'+(prod?'[prod]':'[dev]')+': '+condition+'!=true';
-    var throw_now = (!prod || opts[option_keys.is_hard]) && !opts[option_keys.is_soft];
+    var interupt_execution = (!prod || opts[option_keys.is_hard]) && !opts[option_keys.is_soft];
 
 function is_prod() {
     var prod_browser = is_browser() && window.location.hostname !== 'localhost';
