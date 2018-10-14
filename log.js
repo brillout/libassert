@@ -1,3 +1,5 @@
+var isNodejs = require('./utils/isNodejs');
+
 log.logify_input = logify_input;
 
 module.exports = log;
@@ -36,7 +38,7 @@ function stringify_object(obj) {
     try {
         return JSON.stringify(obj_copy, null, 2);
     } catch(e) {
-        if( is_nodejs() ) {
+        if( isNodejs() ) {
             var util = require('util');
             return util.inspect(obj);
         }
@@ -88,8 +90,4 @@ function get_prettier_copy(el, parent_objects=[]) {
         el_copy[key] = get_prettier_copy(el[key], parent_objects);
     }
     return el_copy;
-}
-
-function is_nodejs() {
-    return typeof process !== "undefined";
 }

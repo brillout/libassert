@@ -1,5 +1,6 @@
 var logify_input = require('./log').logify_input;
 var titleFormat = require('@brillout/format-text').titleFormat;
+var isNodejs = require('./utils/isNodejs');
 
 var option_keys = {
     is_warning: 'is_warning',
@@ -131,7 +132,7 @@ function getErrorDetailsMessage(opts) {
 function throwError(message, opts, callStack) {
     var interupt_execution = !opts[option_keys.is_warning];
 
-    if( is_nodejs() ) {
+    if( isNodejs() ) {
         if( interupt_execution ) {
             var err = new Error();
             err.stack = '\n\n'+message.join('\n');
@@ -195,15 +196,11 @@ function getCallStack() {
 
 function is_prod() {
     var prod_browser = is_browser() && window.location.hostname !== 'localhost';
-    var prod_nodejs = is_nodejs() && process.env['NODE_ENV'] === 'production';
+    var prod_nodejs = isNodejs() && process.env['NODE_ENV'] === 'production';
     return prod_browser || prod_nodejs;
 }
 */
 
 function is_browser() {
     return typeof window !== "undefined";
-}
-
-function is_nodejs() {
-    return typeof process !== "undefined";
 }
