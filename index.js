@@ -63,11 +63,10 @@ function getErrorMessage(condition, msgs, opts, callStack) {
 
     if( ! is_browser() ) {
         message = message.concat(getStackMessage(opts, callStack));
+        message.push('\n');
     }
 
     message = message.concat(getErrorSummaryMessage(condition, msgs, opts));
-
-    message.push('');
 
     return message;
 }
@@ -105,10 +104,16 @@ function getStackMessage(opts, callStack) {
     if( opts[option_keys.is_warning] ) {
         return [];
     }
+
+    /*
+    // Without this Node.js adds a `[` and a `]` to the error string
+    var niceFormattingPrefix = 'Error\n    at:';
+    */
+
     return [
+     // niceFormattingPrefix,
         titleFormat('Stack Trace'),
-        callStack.join('\n'),
-        '\n'
+        callStack.join('\n')
     ];
 }
 function getErrorDetailsMessage(opts) {
@@ -135,7 +140,7 @@ function throwError(message, opts, callStack) {
     if( isNodejs() ) {
         if( interupt_execution ) {
             var err = new Error();
-            err.stack = '\n\n'+message.join('\n');
+            err.stack = message.join('\n');
             throw err;
         } else {
             for(var i in message) console.error(message[i]);
@@ -179,7 +184,9 @@ function getCallStack() {
         if( line.indexOf(' (internal/') !== -1 ) {
             continue;
         }
-        lines__filtered.push(line.replace(/^ */, ''));
+     // line = line.replace(/^ */, '');
+     // line = line.replace(/^at */, '  ');
+        lines__filtered.push(line);
     }
 
     var callStack = lines__filtered;
