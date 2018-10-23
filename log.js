@@ -16,6 +16,18 @@ function log() {
 }
 
 function logify_input(input) {
+    var str = get_str(input);
+
+    // We cap huge strings to make scrolling not impossible
+    var LIMIT = 10000;
+    if( str && str.length > LIMIT ) {
+      return str.slice(0, LIMIT)+'[CROPPED-BY-REASSERT]';
+    }
+
+    return str;
+}
+
+function get_str(input) {
     if( ! input ) {
         return input;
     }
@@ -29,12 +41,11 @@ function logify_input(input) {
     if( input_str.slice(0, PREFIX_UGLY.length) === PREFIX_UGLY ) {
         return stringify_object(input);
     }
-
     return input_str;
 }
 
 function stringify_object(obj) {
-    const obj_copy = get_prettier_copy(obj);
+    var obj_copy = get_prettier_copy(obj);
     try {
         return JSON.stringify(obj_copy, null, 2);
     } catch(e) {
@@ -85,7 +96,7 @@ function get_prettier_copy(el, parent_objects=[]) {
     }
     parent_objects = [el, ...parent_objects];
 
-    const el_copy = new (el.constructor);
+    var el_copy = new (el.constructor);
     for(var key in el) {
         el_copy[key] = get_prettier_copy(el[key], parent_objects);
     }

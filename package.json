@@ -1,6 +1,6 @@
 {
   "name": "reassert",
-  "version": "1.1.16",
+  "version": "1.1.17",
   "description": "Assertion library that is feature-rich yet minimalistic.",
   "repository": "github:brillout/reassert",
   "dependencies": {
