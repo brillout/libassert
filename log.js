@@ -37,7 +37,7 @@ function get_str(input) {
     }
 
     var PREFIX_UGLY = '[object ';
-    var input_str = input.toString();
+    var input_str = toStr(input);
     if( input_str.slice(0, PREFIX_UGLY.length) === PREFIX_UGLY ) {
         return stringify_object(input);
     }
@@ -53,7 +53,7 @@ function stringify_object(obj) {
             var util = require('util');
             return util.inspect(obj);
         }
-        return obj_copy.toString()+'['+e+'][Error]'+stringification_name;
+        return toStr(obj_copy)+'['+e+'][Error]'+stringification_name;
     }
 }
 
@@ -65,7 +65,7 @@ function get_prettier_copy(el, parent_objects=[]) {
     if( el instanceof RegExp ) {
         if( ! el.toJSON ) {
             el.toJSON = function() {
-                var str = '[RegExp: '+el.toString()+']';
+                var str = '[RegExp: '+toStr(el)+']';
                 return str;
             };
         }
@@ -101,4 +101,11 @@ function get_prettier_copy(el, parent_objects=[]) {
         el_copy[key] = get_prettier_copy(el[key], parent_objects);
     }
     return el_copy;
+}
+
+function toStr(thing) {
+    if( typeof thing === "object" && !thing.toString ) {
+      return '[object Object]';
+    }
+    return (''+thing);
 }
