@@ -1,4 +1,4 @@
-var assert = require('./');
+var assert = require('./assert');
 
 module.exports = function() {
     var args = [].slice.call(arguments);
