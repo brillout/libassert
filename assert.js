@@ -161,7 +161,7 @@ function throwError(message, opts, callStack) {
 function throw__browser(message) {
     for(var i in message) console.error(message[i]);
     Error.stackTraceLimit = Infinity;
-    throw new Error(message.join('\n'));
+    throw new Error();
 }
 
 function getCallStack() {
