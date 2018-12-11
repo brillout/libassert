@@ -62,7 +62,7 @@ function getErrorMessage(condition, msgs, opts, callStack) {
     message = message.concat(getErrorDetailsMessage(opts));
 
     if( ! is_browser() ) {
-        message = message.concat(getStackMessage(opts, callStack));
+        message = message.concat(getStackMessage(opts, msgs, callStack));
         message.push('\n');
     }
 
@@ -100,8 +100,8 @@ function getErrorSummaryMessage(condition, msgs, opts) {
 
     return message;
 }
-function getStackMessage(opts, callStack) {
-    if( opts[option_keys.is_warning] ) {
+function getStackMessage(opts, msgs, callStack) {
+    if( opts[option_keys.is_warning] && msgs.length>0 ) {
         return [];
     }
 
