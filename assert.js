@@ -178,7 +178,7 @@ function getCallStack() {
         if( line === 'Error' ) {
             continue;
         }
-        if( line.indexOf('/node_modules/reassert/') !== -1 ) {
+        if( line.indexOf('/node_modules/@brillout/reassert/') !== -1 ) {
             continue;
         }
         if( line.indexOf(' (internal/') !== -1 ) {
