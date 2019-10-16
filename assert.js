@@ -9,10 +9,9 @@ var option_keys = {
     details: 'details',
 };
 
-module.exports = reassert;
+module.exports = assert;
 
-function reassert(condition) {
-    // assert
+function assert(condition) {
     if( condition ) {
         return condition;
     }
@@ -30,7 +29,7 @@ function reassert(condition) {
     // throw logic
     throwError(message, opts, callStack);
 
-    // convenience to write code like `if( ! require('reassert/soft')(condition) ) return;`
+    // convenience to write code like `if( ! require('assert/soft')(condition) ) return;`
     return condition;
 }
 
@@ -44,7 +43,7 @@ function parseArguments(args) {
             for(var j in arg) {
                 if( !option_keys[j] && j!=='IS_REASSERT_OPTS' ) {
                     var msg = 'Unkonwn option `'+j+'`';
-                    throw new Error('Reassert: [Internal Error]: '+msg);
+                    throw new Error('@brillout/assert: [Internal Error]: '+msg);
                 }
                 opts[j] = arg[j];
             }
@@ -178,7 +177,7 @@ function getCallStack() {
         if( line === 'Error' ) {
             continue;
         }
-        if( line.indexOf('/node_modules/@brillout/reassert/') !== -1 ) {
+        if( line.indexOf('/node_modules/@brillout/assert/') !== -1 ) {
             continue;
         }
         if( line.indexOf(' (internal/') !== -1 ) {
