@@ -1,6 +1,8 @@
-This assertion library is about:
-- Printing assertion failure messages in a readable way.
-- Having different assertion types.
+# `@brillout/assert`
+
+`@brillout/assert` is an assertion library that features:
+- Readable assertion failure messages.
+- Different assertion types.
 
 The assertion types are:
 
@@ -9,9 +11,13 @@ The assertion types are:
 - `assert.usage` - The assertion fails because of a wrong usage.
 - `assert.warning` - The assertion fails but this is not critical. Execution is not stopped: the program continues to run.
 
-What is the purpose of these assertion types?
+- [Basic Usage](#basic-usage)
+- [`assert.interal`](#assertinternal)
+- [`assert.usage`](#assertusage)
+- [`assert`](#assert)
+- [`assert.warning`](#assertwarning)
 
-Let's consider the following:
+##### Basic Usage**
 
 ~~~js
 const assert = require('@brillout/assert'); // npm install @brillout/assert
@@ -28,15 +34,25 @@ function getAge(person) {
 }
 ~~~
 
-Now imagine that `person` comes from a database that contains a rule that `person.age` is always a positive number. In that case we certainly expect `person.age` to be a positive number and we should use `assert.internal`:
+##### `assert-internal`
+
+Imagine that `person` in the example above
+comes from a database that contains a rule ensuring
+that `person.age` is always a positive number;
+we expect `person.age` to be always a positive number.
+This means that **we expect the assertion to never fail** and we use **`assert.internal`**:
+if the assertion does fail then it's because we made a mistake in our thinking or there is a bug in our code;
+the responsability is on our side.
 
 ~~~js
 const assert = require('@brillout/assert');
 
+// `person` comes from a database that ensures that `person.age` is always a positive number.
+// We expect the assertion to always succeed and therefore use `assert.internal`.
 function getAge(person) {
   assert.internal(
     person.age && person.age>=0,
-    // We still print
+    // We print `person` for debugging purposes, in case there is a bug and the assertion does fail.
     {person}
   );
 }
@@ -48,8 +64,8 @@ The following is printed if `age===-1`:
 ****************************************
 ************* Stack Trace **************
 ****************************************
-at getAge (~/code/assert/example/internal-error.js:6:10)
-at Object.<anonymous> (~/code/assert/example/internal-error.js:3:1)
+getAge (~/@brillout/assert/example/internal-error.js:6:10)
+Object.<anonymous> (~/@brillout/assert/example/internal-error.js:3:1)
 
 
 ****************************************
@@ -62,7 +78,13 @@ at Object.<anonymous> (~/code/assert/example/internal-error.js:3:1)
 }
 ~~~
 
-But, if `person` comes from a user, then we expect that the user mistakenly sets the age to a negative number. This is something we expect and we should use `assert.usage`:
+##### `assert-usage`
+
+If `person` comes from a user,
+then the user may mistakenly set `person.age` to a negative number.
+This means that **we expect that the assertion may fail** we use **`assert.usage`**:
+if the assertion fails then it's because the user didn't properly use our program and
+the responsability is on the side of the user.
 
 ~~~js
 const assert = require('@brillout/assert');
@@ -71,7 +93,7 @@ function getAge(person) {
   assert.usage(
     person.age && person.age>=0,
     // We print a nice error message telling the user his mistake.
-    '`person.age` should be a positive number.',
+    'You should set `person.age` to a positive number.',
     'The person with the wrong age is:',
     {person}
   );
@@ -84,22 +106,27 @@ The following is printed if `age===-1`:
 ****************************************
 ************* Stack Trace **************
 ****************************************
-    at getAge (/home/romu/code/assert/example/wrong-usage.js:6:10)
-    at Object.<anonymous> (/home/romu/code/assert/example/wrong-usage.js:3:1)
+getAge (~/@brillout/assert/example/wrong-usage.js:6:10)
+Object.<anonymous> (~/@brillout/assert/example/wrong-usage.js:3:1)
 
 
 ****************************************
 ************* Wrong Usage **************
 ****************************************
-`person.age` should be a positive number.
+You should set `person.age` to a positive number.
 The person with the wrong age is:
 {
   "person": {
+    "name": "Luke Skywalker",
     "age": -1
   }
 }
 ~~~
 
+##### `assert`
+
 If you cannot know beforehand whether the assertion may fail because of an internal error or a wrong usage then use `assert`.
 
-If the error is not crictical then you can use `assert.warning` and the execution of the program will not stop: your program continues to run.
+##### `assert-warning`
+
+If the error is not crictical then you can use `assert.warning` and the execution of the program will not stop: your program continues to run even if the assertion fails.
