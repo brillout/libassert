@@ -9,15 +9,21 @@ The assertion types are:
 - `assert` - Normal assertion
 - `assert.internal` - The assertion fails because of an internal error.
 - `assert.usage` - The assertion fails because of a wrong usage.
-- `assert.warning` - The assertion fails but this is not critical. Execution is not stopped: the program continues to run.
+- `assert.warning` - The assertion fails but is not critical. Execution is not stopped and the program continues to run.
 
-<br/>
+&nbsp;
 
-- [Basic Usage](#basic-usage)
-- [`assert.internal`](#assert-internal)
-- [`assert.usage`](#assert-usage)
-- [`assert`](#assert)
-- [`assert.warning`](#assert-warning)
+<p align='center'>
+<a href="#basic-usage">Basic Usage</a>
+&nbsp; | &nbsp;
+<a href="#assertinternal">`assert.internal`</a>
+&nbsp; | &nbsp;
+<a href="#assertusage">`assert.usage`</a>
+&nbsp; | &nbsp;
+<a href="#assert">`assert`</a>
+&nbsp; | &nbsp;
+<a href="#assertwarning">`assert.warning`</a>
+</p>
 
 #### Basic Usage
 
