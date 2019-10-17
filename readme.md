@@ -16,7 +16,7 @@ The assertion types are:
 <p align='center'>
 <a href="#basic-usage">Basic Usage</a>
 &nbsp; | &nbsp;
-<a href="#assertinternal">`assert.internal`</a>
+<a href="#assertinternal"><code>assert.internal</code></a>
 &nbsp; | &nbsp;
 <a href="#assertusage">`assert.usage`</a>
 &nbsp; | &nbsp;
@@ -25,6 +25,7 @@ The assertion types are:
 <a href="#assertwarning">`assert.warning`</a>
 </p>
 
+<br/>
 #### Basic Usage
 
 ~~~js
@@ -42,6 +43,7 @@ function getAge(person) {
 }
 ~~~
 
+<br/>
 #### `assert.internal`
 
 Imagine that `person` in the example above
@@ -86,6 +88,7 @@ Object.<anonymous> (~/@brillout/assert/example/internal-error.js:3:1)
 }
 ~~~
 
+<br/>
 #### `assert.usage`
 
 If `person` comes from a user,
@@ -131,10 +134,15 @@ The person with the wrong age is:
 }
 ~~~
 
+<br/>
 #### `assert`
 
 If you cannot know beforehand whether the assertion may fail because of an internal error or a wrong usage then use `assert`.
 
+<br/>
 #### `assert.warning`
 
 If the error is not crictical then you can use `assert.warning` and the execution of the program will not stop: your program continues to run even if the assertion fails.
+
+<br/>
+<br/>
