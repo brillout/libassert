@@ -147,7 +147,7 @@ If you cannot know beforehand whether the assertion may fail because of an inter
 
 #### `assert.warning`
 
-If the error is not crictical then you can use `assert.warning` and the execution of the program isn't interrupted: your program continues to run even if the assertion fails.
+If the error is not critical then you can use `assert.warning` and the execution of the program isn't interrupted: your program continues to run even if the assertion fails.
 
 <br/>
 <br/>
