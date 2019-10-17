@@ -1,8 +1,9 @@
 # `@brillout/assert`
 
-Assertion library that features:
-- Readable assertion failure messages.
+JavaScript assertion library that features:
 - Different assertion types.
+- Works in Node.js and in the browser.
+- Readable assertion failure messages.
 
 The assertion types are:
 
