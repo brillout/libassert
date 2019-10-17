@@ -25,8 +25,6 @@ The assertion types are:
 <a href="#assertwarning"><code>assert.warning</code></a>
 </p>
 
-<br/>
-
 #### Basic Usage
 
 ~~~js
