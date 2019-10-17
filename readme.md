@@ -1,6 +1,6 @@
 # `@brillout/assert`
 
-`@brillout/assert` is an assertion library that features:
+Assertion library that features:
 - Readable assertion failure messages.
 - Different assertion types.
 
@@ -11,13 +11,15 @@ The assertion types are:
 - `assert.usage` - The assertion fails because of a wrong usage.
 - `assert.warning` - The assertion fails but this is not critical. Execution is not stopped: the program continues to run.
 
-- [Basic Usage](#basic-usage)
-- [`assert.interal`](#assertinternal)
-- [`assert.usage`](#assertusage)
-- [`assert`](#assert)
-- [`assert.warning`](#assertwarning)
+<br/>
 
-##### Basic Usage**
+- [Basic Usage](#basic-usage)
+- [`assert.internal`](#assert-internal)
+- [`assert.usage`](#assert-usage)
+- [`assert`](#assert)
+- [`assert.warning`](#assert-warning)
+
+#### Basic Usage
 
 ~~~js
 const assert = require('@brillout/assert'); // npm install @brillout/assert
@@ -34,13 +36,13 @@ function getAge(person) {
 }
 ~~~
 
-##### `assert-internal`
+#### `assert.internal`
 
 Imagine that `person` in the example above
 comes from a database that contains a rule ensuring
 that `person.age` is always a positive number;
 we expect `person.age` to be always a positive number.
-This means that **we expect the assertion to never fail** and we use **`assert.internal`**:
+This means that **we expect the assertion to not fail** and we use **`assert.internal`**:
 if the assertion does fail then it's because we made a mistake in our thinking or there is a bug in our code;
 the responsability is on our side.
 
@@ -78,7 +80,7 @@ Object.<anonymous> (~/@brillout/assert/example/internal-error.js:3:1)
 }
 ~~~
 
-##### `assert-usage`
+#### `assert.usage`
 
 If `person` comes from a user,
 then the user may mistakenly set `person.age` to a negative number.
@@ -123,10 +125,10 @@ The person with the wrong age is:
 }
 ~~~
 
-##### `assert`
+#### `assert`
 
 If you cannot know beforehand whether the assertion may fail because of an internal error or a wrong usage then use `assert`.
 
-##### `assert-warning`
+#### `assert.warning`
 
 If the error is not crictical then you can use `assert.warning` and the execution of the program will not stop: your program continues to run even if the assertion fails.
