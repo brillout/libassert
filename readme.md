@@ -1,9 +1,9 @@
 # `@brillout/assert`
 
 JavaScript assertion library that features:
-- Different assertion types.
-- Works in Node.js and in the browser.
+- Works in Node.js as well as in the browser.
 - Readable assertion failure messages.
+- Different assertion types.
 
 The assertion types are:
 
@@ -36,9 +36,10 @@ function getAge(person) {
   assert(
     // The condition to assert:
     person.age && person.age>=0,
-    // All the following arguments are error message that are printed when the condition fails:
+
+    // All the following arguments are messages that are printed when the condition fails.
     "The age of a person should be a positive number.",
-    {person} // We print the person to know which user has a wrong age value.
+    {person} // We print the person to know which person has a wrong age value.
   );
 }
 ~~~
@@ -95,7 +96,7 @@ Object.<anonymous> (~/@brillout/assert/example/internal-error.js:3:1)
 
 If `person` comes from a user,
 then the user may mistakenly set `person.age` to a negative number.
-This means that **we expect that the assertion may fail** we use **`assert.usage`**:
+This means that **we expect that the assertion may fail** and we use **`assert.usage`**:
 if the assertion fails then it's because the user didn't properly use our program and
 the responsability is on the side of the user.
 
@@ -146,7 +147,7 @@ If you cannot know beforehand whether the assertion may fail because of an inter
 
 #### `assert.warning`
 
-If the error is not crictical then you can use `assert.warning` and the execution of the program will not stop: your program continues to run even if the assertion fails.
+If the error is not crictical then you can use `assert.warning` and the execution of the program isn't interrupted: your program continues to run even if the assertion fails.
 
 <br/>
 <br/>
