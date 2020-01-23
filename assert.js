@@ -24,10 +24,10 @@ function assert(condition) {
     var callStack = getCallStack();
 
     // build error message
-    var message = getErrorMessage(condition, msgs, opts, callStack);
+    var {errorMessagesWithStackAndTitles, errorMessages} = getErrorMessage(condition, msgs, opts, callStack);
 
     // throw logic
-    throwError(message, opts, callStack);
+    throwError(errorMessagesWithStackAndTitles, errorMessages, opts, callStack);
 
     // convenience to write code like `if( ! require('assert/soft')(condition) ) return;`
     return condition;
@@ -56,21 +56,24 @@ function parseArguments(args) {
 }
 
 function getErrorMessage(condition, msgs, opts, callStack) {
-    var message = [];
+    var errorMessagesWithStackAndTitles = [];
 
-    message = message.concat(getErrorDetailsMessage(opts));
+    errorMessagesWithStackAndTitles = errorMessagesWithStackAndTitles.concat(getErrorDetailsMessage(opts));
 
     if( ! is_browser() ) {
-        message = message.concat(getStackMessage(opts, msgs, callStack));
-        message.push('\n');
+        errorMessagesWithStackAndTitles = errorMessagesWithStackAndTitles.concat(getStackMessage(opts, msgs, callStack));
+        errorMessagesWithStackAndTitles.push('\n');
     }
 
-    message = message.concat(getErrorSummaryMessage(condition, msgs, opts));
+    var {errorMessages, errorMessagesWithTitle} = getErrorSummaryMessage(condition, msgs, opts);
 
-    return message;
+    errorMessagesWithStackAndTitles = errorMessagesWithStackAndTitles.concat(errorMessagesWithTitle);
+
+    return {errorMessages, errorMessagesWithStackAndTitles};
 }
 function getErrorSummaryMessage(condition, msgs, opts) {
-    let message = [];
+    var errorMessagesWithTitle = [];
+    var errorMessages = [];
 
     var title = (
         opts[option_keys.is_warning] && 'Warning' ||
@@ -78,26 +81,28 @@ function getErrorSummaryMessage(condition, msgs, opts) {
         opts[option_keys.is_internal] && 'Internal Error' ||
         'Assertion Fail'
     );
-
-    message.push(titleFormat(title));
+    errorMessagesWithTitle.push(titleFormat(title));
 
     if( msgs.length===0 ) {
-        message.push('Failed assertion condition: `'+condition+' != true`');
+        const msg = 'Failed assertion condition: `'+condition+' != true`';
+        errorMessagesWithTitle.push(msg);
+        errorMessages.push(msg);
     }
 
     for(var i in msgs) {
         var msg = msgs[i];
         var str = logify_input(msg);
 
-        message.push(str);
+        errorMessagesWithTitle.push(str);
+        errorMessages.push(str);
     }
 
     if( opts.details ) {
-        message.push('');
-        message.push('See "Error Details" above for more information.');
+        errorMessagesWithTitle.push('');
+        errorMessagesWithTitle.push('See "Error Details" above for more information.');
     }
 
-    return message;
+    return {errorMessagesWithTitle, errorMessages};
 }
 function getStackMessage(opts, msgs, callStack) {
     if( opts[option_keys.is_warning] && msgs.length>0 ) {
@@ -133,32 +138,32 @@ function getErrorDetailsMessage(opts) {
     return message;
 }
 
-function throwError(message, opts, callStack) {
+function throwError(errorMessagesWithStackAndTitles, errorMessages, opts, callStack) {
     var interupt_execution = !opts[option_keys.is_warning];
 
     if( isNodejs() ) {
         if( interupt_execution ) {
-            var err = new Error();
-            err.stack = message.join('\n');
+            var err = new Error(errorMessages.join('\n'));
+            err.stack = errorMessagesWithStackAndTitles.join('\n');
             throw err;
         } else {
-            for(var i in message) console.error(message[i]);
+            for(var i in errorMessagesWithStackAndTitles) console.error(errorMessagesWithStackAndTitles[i]);
         }
     }
 
     if( is_browser() ) {
         if( interupt_execution ) {
-            throw__browser(message);
+            throw__browser(errorMessagesWithStackAndTitles);
         } else {
             setTimeout(function() {
-                throw__browser(message);
+                throw__browser(errorMessagesWithStackAndTitles);
             }, 0);
         }
     }
 }
 
-function throw__browser(message) {
-    for(var i in message) console.error(message[i]);
+function throw__browser(errorMessagesWithStackAndTitles) {
+    for(var i in errorMessagesWithStackAndTitles) console.error(errorMessagesWithStackAndTitles[i]);
     Error.stackTraceLimit = Infinity;
     throw new Error();
 }
