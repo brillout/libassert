@@ -60,10 +60,8 @@ function getErrorMessage(condition, msgs, opts, callStack) {
 
     errorMessagesWithStackAndTitles = errorMessagesWithStackAndTitles.concat(getErrorDetailsMessage(opts));
 
-    if( ! is_browser() ) {
-        errorMessagesWithStackAndTitles = errorMessagesWithStackAndTitles.concat(getStackMessage(opts, msgs, callStack));
-        errorMessagesWithStackAndTitles.push('\n');
-    }
+    errorMessagesWithStackAndTitles = errorMessagesWithStackAndTitles.concat(getStackMessage(opts, msgs, callStack));
+    errorMessagesWithStackAndTitles.push('\n');
 
     var {errorMessages, errorMessagesWithTitle} = getErrorSummaryMessage(condition, msgs, opts);
 
@@ -141,31 +139,28 @@ function getErrorDetailsMessage(opts) {
 function throwError(errorMessagesWithStackAndTitles, errorMessages, opts, callStack) {
     var interupt_execution = !opts[option_keys.is_warning];
 
+    const err = new Error(errorMessages.join('\n'));
+    err.stack = errorMessagesWithStackAndTitles.join('\n');
+
     if( isNodejs() ) {
         if( interupt_execution ) {
-            var err = new Error(errorMessages.join('\n'));
-            err.stack = errorMessagesWithStackAndTitles.join('\n');
             throw err;
         } else {
-            for(var i in errorMessagesWithStackAndTitles) console.error(errorMessagesWithStackAndTitles[i]);
+            // for(var i in errorMessagesWithStackAndTitles) console.error(errorMessagesWithStackAndTitles[i]);
+            console.error(err);
         }
     }
 
     if( is_browser() ) {
+        // for(var i in errorMessagesWithStackAndTitles) console.error(errorMessagesWithStackAndTitles[i]);
         if( interupt_execution ) {
-            throw__browser(errorMessagesWithStackAndTitles);
+            throw err;
         } else {
             setTimeout(function() {
-                throw__browser(errorMessagesWithStackAndTitles);
+                throw err;
             }, 0);
         }
     }
-}
-
-function throw__browser(errorMessagesWithStackAndTitles) {
-    for(var i in errorMessagesWithStackAndTitles) console.error(errorMessagesWithStackAndTitles[i]);
-    Error.stackTraceLimit = Infinity;
-    throw new Error();
 }
 
 function getCallStack() {
