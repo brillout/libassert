@@ -21,13 +21,13 @@ function assert(condition) {
     var msgs = parsed.msgs;
     var opts = parsed.opts;
 
-    var callStack = getCallStack();
+    const {callStack__processed, callStack__original} = getCallStack();
 
     // build error message
-    var {errorMessagesWithStackAndTitles, errorMessages} = getErrorMessage(condition, msgs, opts, callStack);
+    var {errorMessagesWithStackAndTitles, errorMessages} = getErrorMessage({condition, msgs, opts, callStack__processed});
 
     // throw logic
-    throwError(errorMessagesWithStackAndTitles, errorMessages, opts, callStack);
+    throwError({errorMessagesWithStackAndTitles, errorMessages, opts, callStack__original});
 
     // convenience to write code like `if( ! require('assert/soft')(condition) ) return;`
     return condition;
@@ -55,12 +55,12 @@ function parseArguments(args) {
     return {msgs: msgs, opts: opts};
 }
 
-function getErrorMessage(condition, msgs, opts, callStack) {
+function getErrorMessage({condition, msgs, opts, callStack__processed}) {
     var errorMessagesWithStackAndTitles = [];
 
     errorMessagesWithStackAndTitles = errorMessagesWithStackAndTitles.concat(getErrorDetailsMessage(opts));
 
-    errorMessagesWithStackAndTitles = errorMessagesWithStackAndTitles.concat(getStackMessage(opts, msgs, callStack));
+    errorMessagesWithStackAndTitles = errorMessagesWithStackAndTitles.concat(getStackMessage({opts, msgs, callStack__processed}));
     errorMessagesWithStackAndTitles.push('\n');
 
     var {errorMessages, errorMessagesWithTitle} = getErrorSummaryMessage(condition, msgs, opts);
@@ -102,7 +102,7 @@ function getErrorSummaryMessage(condition, msgs, opts) {
 
     return {errorMessagesWithTitle, errorMessages};
 }
-function getStackMessage(opts, msgs, callStack) {
+function getStackMessage({opts, msgs, callStack__processed}) {
     if( opts[option_keys.is_warning] && msgs.length>0 ) {
         return [];
     }
@@ -115,7 +115,7 @@ function getStackMessage(opts, msgs, callStack) {
     return [
      // niceFormattingPrefix,
         titleFormat('Stack Trace'),
-        callStack.join('\n')
+        callStack__processed.join('\n')
     ];
 }
 function getErrorDetailsMessage(opts) {
@@ -136,11 +136,12 @@ function getErrorDetailsMessage(opts) {
     return message;
 }
 
-function throwError(errorMessagesWithStackAndTitles, errorMessages, opts, callStack) {
+function throwError({errorMessagesWithStackAndTitles, errorMessages, opts, callStack__original}) {
     var interupt_execution = !opts[option_keys.is_warning];
 
     const err = new Error(errorMessages.join('\n'));
     err.stack = errorMessagesWithStackAndTitles.join('\n');
+    err.stack__original = callStack__original;
 
     if( isNodejs() ) {
         if( interupt_execution ) {
@@ -166,12 +167,11 @@ function throwError(errorMessagesWithStackAndTitles, errorMessages, opts, callSt
 function getCallStack() {
     var stackTraceLimit__original = Error.stackTraceLimit;
     Error.stackTraceLimit = Infinity;
-    var callStackString = new Error().stack;
+    const callStack__original = new Error().stack;
     Error.stackTraceLimit = stackTraceLimit__original;
 
-    var lines = callStackString.split('\n');
-
-    var lines__filtered = [];
+    const lines__filtered = [];
+    const lines = callStack__original.split('\n');
     for(var i in lines) {
         var line = lines[i];
         if( line === 'Error' ) {
@@ -188,8 +188,9 @@ function getCallStack() {
         lines__filtered.push(line);
     }
 
-    var callStack = lines__filtered;
-    return callStack;
+    const callStack__processed = lines__filtered;
+
+    return {callStack__original, callStack__processed};
 }
 
 /* TODO - reimplement soft errors
