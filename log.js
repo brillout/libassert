@@ -101,5 +101,5 @@ function toStr(thing) {
   if (typeof thing === "object" && !thing.toString) {
     return "[object Object]";
   }
-  return "" + thing;
+  return thing.toString();
 }

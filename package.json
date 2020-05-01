@@ -1,6 +1,6 @@
 {
   "name": "@brillout/assert",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Assertion library - Feature-rich yet minimalistic.",
   "dependencies": {
     "@brillout/format-text": "^0.1.3"
