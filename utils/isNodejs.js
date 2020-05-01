@@ -1,5 +1,10 @@
 module.exports = isNodejs;
 
 function isNodejs() {
-  return typeof "process" !== "undefined" && process && process.versions && process.versions.node;
+  return (
+    typeof "process" !== "undefined" &&
+    process &&
+    process.versions &&
+    process.versions.node
+  );
 }

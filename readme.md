@@ -1,6 +1,7 @@
 # `@brillout/assert`
 
 JavaScript assertion library that features:
+
 - Works in Node.js as well as in the browser.
 - Readable assertion failure messages.
 - Different assertion types.
@@ -28,21 +29,21 @@ The assertion types are:
 
 #### Basic Usage
 
-~~~js
-const assert = require('@brillout/assert'); // npm install @brillout/assert
+```js
+const assert = require("@brillout/assert"); // npm install @brillout/assert
 // Or: `import assert from @brillout/assert`
 
 function getAge(person) {
   assert(
     // The condition to assert:
-    person.age && person.age>=0,
+    person.age && person.age >= 0,
 
     // All the following arguments are messages that are printed when the condition fails.
     "The age of a person should be a positive number.",
-    {person} // We print the person to know which person has a wrong age value.
+    { person } // We print the person to know which person has a wrong age value.
   );
 }
-~~~
+```
 
 <br/>
 
@@ -56,23 +57,23 @@ This means that **we expect the assertion to not fail** and we use **`assert.int
 if the assertion does fail then it's because we made a mistake in our thinking or there is a bug in our code;
 the responsability is on our side.
 
-~~~js
-const assert = require('@brillout/assert');
+```js
+const assert = require("@brillout/assert");
 
 // `person` comes from a database that ensures that `person.age` is always a positive number.
 // We expect the assertion to always succeed and therefore use `assert.internal`.
 function getAge(person) {
   assert.internal(
-    person.age && person.age>=0,
+    person.age && person.age >= 0,
     // We print `person` for debugging purposes, in case there is a bug and the assertion does fail.
-    {person}
+    { person }
   );
 }
-~~~
+```
 
 The following is printed if `age===-1`:
 
-~~~
+```
 ****************************************
 ************* Stack Trace **************
 ****************************************
@@ -88,7 +89,7 @@ Object.<anonymous> (~/@brillout/assert/example/internal-error.js:3:1)
     "age": -1
   }
 }
-~~~
+```
 
 <br/>
 
@@ -100,23 +101,23 @@ This means that **we expect that the assertion may fail** and we use **`assert.u
 if the assertion fails then it's because the user didn't properly use our program and
 the responsability is on the side of the user.
 
-~~~js
-const assert = require('@brillout/assert');
+```js
+const assert = require("@brillout/assert");
 
 function getAge(person) {
   assert.usage(
-    person.age && person.age>=0,
+    person.age && person.age >= 0,
     // We print a nice error message telling the user his mistake.
-    'You should set `person.age` to a positive number.',
-    'The person with the wrong age is:',
-    {person}
+    "You should set `person.age` to a positive number.",
+    "The person with the wrong age is:",
+    { person }
   );
 }
-~~~
+```
 
 The following is printed if `age===-1`:
 
-~~~
+```
 ****************************************
 ************* Stack Trace **************
 ****************************************
@@ -135,7 +136,7 @@ The person with the wrong age is:
     "age": -1
   }
 }
-~~~
+```
 
 <br/>
 
