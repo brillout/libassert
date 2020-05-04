@@ -163,7 +163,7 @@ function throwError({
 }) {
   var interupt_execution = !opts[option_keys.is_warning];
 
-  const err = new Error(errorMessages.join("\n"));
+  const err = new Error(errorMessages[0]);
   err.stack = errorMessagesWithStackAndTitles.join("\n");
   err.stack__original = callStack__original;
 
