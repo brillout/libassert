@@ -37,6 +37,7 @@ function brillout_assert(condition) {
     errorMessages,
     opts,
     callStack__original,
+    callStack__processed,
   });
 
   // convenience to write code like `if( ! require('assert/soft')(condition) ) return;`
@@ -136,7 +137,7 @@ function getStackMessage({ opts, msgs, callStack__processed }) {
   return [
     // niceFormattingPrefix,
     titleFormat("Stack Trace"),
-    callStack__processed.join("\n"),
+    callStack__processed,
   ];
 }
 function getErrorDetailsMessage(opts) {
@@ -160,12 +161,14 @@ function throwError({
   errorMessages,
   opts,
   callStack__original,
+  callStack__processed,
 }) {
   var interupt_execution = !opts[option_keys.is_warning];
 
   const err = new Error(errorMessages[0]);
   err.stack = errorMessagesWithStackAndTitles.join("\n");
   err.stack__original = callStack__original;
+  err.stack__processed = callStack__processed;
 
   if (isNodejs()) {
     if (interupt_execution) {
@@ -217,7 +220,7 @@ function getCallStack() {
   }
   lines__filtered.reverse();
 
-  const callStack__processed = lines__filtered;
+  const callStack__processed = lines__filtered.join("\n");
 
   return { callStack__original, callStack__processed };
 }
