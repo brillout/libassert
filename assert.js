@@ -9,9 +9,9 @@ var option_keys = {
   details: "details",
 };
 
-module.exports = assert;
+module.exports = brillout_assert;
 
-function assert(condition) {
+function brillout_assert(condition) {
   if (condition) {
     return condition;
   }
@@ -196,13 +196,17 @@ function getCallStack() {
 
   const lines__filtered = [];
   const lines = callStack__original.split("\n");
+  lines.reverse();
   for (var i in lines) {
     var line = lines[i];
     if (line === "Error") {
       continue;
     }
     if (line.indexOf("/node_modules/@brillout/assert/") !== -1) {
-      continue;
+      break;
+    }
+    if (line.indexOf("brillout_assert") !== -1) {
+      break;
     }
     if (line.indexOf(" (internal/") !== -1) {
       continue;
@@ -211,6 +215,7 @@ function getCallStack() {
     // line = line.replace(/^at */, '  ');
     lines__filtered.push(line);
   }
+  lines__filtered.reverse();
 
   const callStack__processed = lines__filtered;
 
