@@ -1,4 +1,5 @@
 var isNodejs = require("./utils/isNodejs");
+const JSON_S = require("@brillout/json-s");
 
 log.logify_input = logify_input;
 
@@ -47,7 +48,7 @@ function get_str(input) {
 function stringify_object(obj) {
   var obj_copy = get_prettier_copy(obj);
   try {
-    return JSON.stringify(obj_copy, null, 2);
+    return JSON_S.stringify(obj_copy, null, 2);
   } catch (e) {
     if (isNodejs()) {
       var util = require("util");
@@ -62,6 +63,7 @@ function get_prettier_copy(el, parent_objects = []) {
     return el;
   }
 
+  // TODO - this is not needed anymore since JSON_S already does this?
   if (el instanceof RegExp) {
     if (!el.toJSON) {
       el.toJSON = function () {
@@ -71,6 +73,7 @@ function get_prettier_copy(el, parent_objects = []) {
     }
     return el;
   }
+  // TODO - move this to JSON_S?
   if (el instanceof Function) {
     if (!el.toJSON) {
       el.toJSON = function () {
