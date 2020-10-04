@@ -1,14 +1,9 @@
 {
   "name": "@brillout/assert",
-  "version": "0.1.7",
-  "description": "Assertion library - Feature-rich yet minimalistic.",
-  "dependencies": {
-    "@brillout/format-text": "^0.1.3",
-    "@brillout/json-s": "^0.1.0"
-  },
-  "devDependencies": {
-    "stack-trace": "0.0.10"
-  },
+  "//version": "0.1.7",
+  "description": "Assertion library.",
+  "dependencies": {},
+  "devDependencies": {},
   "repository": "github:brillout/assert",
   "publishConfig": {
     "access": "public"

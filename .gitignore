@@ -1,3 +1,10 @@
 node_modules/
-npm-debug.log
+
+# TypeScript build directory
+dist/
+# TypeScript build state
+tsconfig.tsbuildinfo
+
+npm-debug.log*
+yarn-error.log
 package-lock.json
