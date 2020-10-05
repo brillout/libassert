@@ -1,13 +1,13 @@
 {
   "name": "@brillout/assert",
-  "version": "//0.1.7",
+  "version": "0.2.0",
   "description": "Assertion library.",
   "main": "dist/index.js",
   "scripts": {
     "dev": "npm run build:dev",
     "build:dev": "tsc --build --watch",
     "build:prod": "tsc --build",
-    "prepublishOnly": "build:prod"
+    "prepublishOnly": "npm run build:prod"
   },
   "devDependencies": {
     "typescript": "^4.0.3"
