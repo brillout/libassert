@@ -4,28 +4,30 @@ import { cleanStackTrace } from "./manipulateStackTrace";
 
 export { createError };
 
-function createError(
-  errMsgs: unknown[],
-  errMsgStart: string,
-  errMsgEnd?: string
-): Error {
+function createError(errMsgs: unknown[], errMsgStart: string): Error {
   let errMsgLine = "";
 
-  const projectInfo = getProjectInfo();
-  const { projectName } = projectInfo;
+  const { projectName } = getProjectInfo();
   if (projectName) {
     errMsgLine += `[${projectName}]`;
   }
 
-  errMsgLine += errMsgStart;
+  errMsgLine += errMsgStart + " ";
 
-  const msgJoiner = " | ";
-
-  errMsgLine += errMsgs.map(stringifyUnknown).join(msgJoiner);
-
-  if (errMsgEnd) {
-    errMsgLine += msgJoiner + errMsgEnd;
-  }
+  const parts = [...errMsgs];
+  parts
+    .map(stringifyUnknown)
+    .filter(Boolean)
+    .forEach((errMsg, i) => {
+      if (i !== 0 && errMsgLine !== "") {
+        if (!errMsgLine.endsWith(".")) {
+          errMsgLine += " | ";
+        } else {
+          errMsgLine += " ";
+        }
+      }
+      errMsgLine += errMsg;
+    });
 
   let err;
   {

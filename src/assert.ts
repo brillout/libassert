@@ -14,7 +14,7 @@ function assert(assertion: unknown, ...errMsgs: unknown[]): void {
   let errMsgStart: string = `[internal-error] Something unexpected happened.`;
 
   if (projectGithub) {
-    errMsgStart += `Please open a ticket at ${projectGithub}/issues/new.`;
+    errMsgStart += ` Please open a ticket at ${projectGithub}/issues/new.`;
   }
 
   const err = createError(errMsgs, errMsgStart);

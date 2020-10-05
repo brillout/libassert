@@ -1,6 +1,6 @@
 {
   "name": "@brillout/assert",
-  "version": "0.2.0",
+  "version": "//0.1.7",
   "description": "Assertion library.",
   "main": "dist/index.js",
   "scripts": {

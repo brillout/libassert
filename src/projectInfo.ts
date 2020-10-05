@@ -3,7 +3,6 @@ export { setProjectInfo, getProjectInfo };
 type ProjectInfo = {
   projectName?: string;
   projectGithub?: string;
-  projectDocs?: string;
 };
 
 let _projectInfo: ProjectInfo;

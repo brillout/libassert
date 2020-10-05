@@ -9,30 +9,27 @@ function clean(errStack: string | undefined): string | undefined {
     return errStack;
   }
 
-  const linesFiltered = [];
-  const lines = errStack.split("\n");
-  lines.reverse();
-  for (var i in lines) {
-    var line = lines[i];
+  const errStackCleaned = errStack
+    .split("\n")
+    .filter((line) => {
+      // Is not a stack trace line, e.g. the error message.
+      if (!line.startsWith("    at")) {
+        return true;
+      }
 
-    // Remove stack traces related to this package
-    if (line.indexOf("/node_modules/@brillout/assert/") !== -1) {
-      break;
-    }
+      // Remove stack traces related to this package
+      if (line.includes("/node_modules/@brillout/assert/")) {
+        return false;
+      }
 
-    // Remove useless stack traces
-    if (line.indexOf(" (internal/") !== -1) {
-      continue;
-    }
-    if (line === "Error") {
-      continue;
-    }
+      // Remove useless internal stack traces
+      if (line.includes(" (internal/")) {
+        return false;
+      }
 
-    linesFiltered.push(line);
-  }
-  linesFiltered.reverse();
-
-  const errStackCleaned = linesFiltered.join("\n");
+      return true;
+    })
+    .join("\n");
 
   return errStackCleaned;
 }
