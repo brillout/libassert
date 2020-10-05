@@ -1,4 +1,3 @@
-import { assert } from "./assert";
 import { createError } from "./createError";
 import { getProjectInfo } from "./projectInfo";
 
@@ -6,26 +5,25 @@ export { assertUsage };
 export { getUsageError };
 
 export type UsageError = Error & { _brand?: "UsageError" };
-type Assertion = unknown;
-type ErrMsgs = unknown[];
 
-function assertUsage(assertion: Assertion, ...errMsgs: ErrMsgs): void {
+function assertUsage(assertion: unknown, errorMessage: string): void {
   if (assertion) {
     return;
   }
 
-  throw getUsageError(errMsgs);
+  throw getUsageError(errorMessage);
 }
 
-function getUsageError(errMsgs: ErrMsgs, ...rest: unknown[]): UsageError {
-  assert(rest.length === 0);
-
+function getUsageError(errorMessage: string): UsageError {
   const projectInfo = getProjectInfo();
   const { projectName } = projectInfo;
 
-  let errMsgStart: string = `[wrong-usage] Wrong ${projectName} usage.`;
+  let errMsg = `[Wrong Usage] Wrong ${projectName} usage.`;
+  if (errorMessage) {
+    errMsg += " " + errorMessage;
+  }
 
-  const err = createError(errMsgs, errMsgStart);
+  const err = createError(errMsg);
 
   return err;
 }

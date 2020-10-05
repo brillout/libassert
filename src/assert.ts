@@ -3,7 +3,7 @@ import { getProjectInfo } from "./projectInfo";
 
 export { assert };
 
-function assert(assertion: unknown, ...errMsgs: unknown[]): void {
+function assert(assertion: unknown): void {
   if (assertion) {
     return;
   }
@@ -11,13 +11,13 @@ function assert(assertion: unknown, ...errMsgs: unknown[]): void {
   const projectInfo = getProjectInfo();
   const { projectGithub } = projectInfo;
 
-  let errMsgStart: string = `[internal-error] Something unexpected happened.`;
+  let errMsg: string = `[Internal Error] Something unexpected happened.`;
 
   if (projectGithub) {
-    errMsgStart += ` Please open a ticket at ${projectGithub}/issues/new.`;
+    errMsg += ` Please open a new issue at ${projectGithub}/issues/new.`;
   }
 
-  const err = createError(errMsgs, errMsgStart);
+  const err = createError(errMsg);
 
   throw err;
 }

@@ -1,10 +1,9 @@
-import { stringifyUnknown } from "./stringifyUnknown";
 import { getProjectInfo } from "./projectInfo";
 import { cleanStackTrace } from "./manipulateStackTrace";
 
 export { createError };
 
-function createError(errMsgs: unknown[], errMsgStart: string): Error {
+function createError(errMsg: string): Error {
   let errMsgLine = "";
 
   const { projectName } = getProjectInfo();
@@ -12,22 +11,7 @@ function createError(errMsgs: unknown[], errMsgStart: string): Error {
     errMsgLine += `[${projectName}]`;
   }
 
-  errMsgLine += errMsgStart + " ";
-
-  const parts = [...errMsgs];
-  parts
-    .map(stringifyUnknown)
-    .filter(Boolean)
-    .forEach((errMsg, i) => {
-      if (i !== 0 && errMsgLine !== "") {
-        if (!errMsgLine.endsWith(".")) {
-          errMsgLine += " | ";
-        } else {
-          errMsgLine += " ";
-        }
-      }
-      errMsgLine += errMsg;
-    });
+  errMsgLine += errMsg;
 
   let err;
   {
@@ -38,6 +22,13 @@ function createError(errMsgs: unknown[], errMsgStart: string): Error {
   }
 
   cleanStackTrace(err);
+
+  if (err.message.includes("\n")) {
+    throw new Error(
+      "Following assertion error message contains the new line `\n` character which is prohibited: " +
+        err.message
+    );
+  }
 
   return err;
 }
