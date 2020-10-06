@@ -1,5 +1,4 @@
 import { createError } from "./createError";
-import { getProjectInfo } from "./projectInfo";
 
 export { assertUsage };
 export { getUsageError };
@@ -15,10 +14,7 @@ function assertUsage(assertion: unknown, errorMessage: string): void {
 }
 
 function getUsageError(errorMessage: string): UsageError {
-  const projectInfo = getProjectInfo();
-  const { projectName } = projectInfo;
-
-  let errMsg = `[Wrong Usage] Wrong ${projectName} usage.`;
+  let errMsg = `[Wrong Usage]`;
   if (errorMessage) {
     errMsg += " " + errorMessage;
   }

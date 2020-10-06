@@ -11,14 +11,22 @@ function clean(errStack: string | undefined): string | undefined {
 
   const errStackCleaned = errStack
     .split("\n")
-    .filter((line) => {
+    .filter((line, i) => {
       // Is not a stack trace line, e.g. the error message.
       if (!line.startsWith("    at")) {
         return true;
       }
 
       // Remove stack traces related to this package
+      /*
       if (line.includes("/node_modules/@brillout/assert/")) {
+        return false;
+      }
+      */
+      if (line.startsWith("    at Object.createError") && i === 1) {
+        return false;
+      }
+      if (line.startsWith("    at Object.assert") && i === 2) {
         return false;
       }
 
