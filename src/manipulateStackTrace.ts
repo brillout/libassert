@@ -26,7 +26,10 @@ function clean(errStack: string | undefined): string | undefined {
       if (line.startsWith("    at Object.createError") && i === 1) {
         return false;
       }
-      if (line.startsWith("    at Object.assert") && i === 2) {
+      if (line.startsWith("    at Object.getUsageError") && i === 2) {
+        return false;
+      }
+      if (line.startsWith("    at Object.assert") && [2, 3].includes(i)) {
         return false;
       }
 
