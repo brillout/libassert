@@ -14,7 +14,7 @@ function assert(assertion: unknown): void {
   let errMsg: string = `[Internal Error] Something unexpected happened.`;
 
   if (projectGithub) {
-    errMsg += ` Please open a new issue at ${projectGithub}/issues/new and include the following call stack.`;
+    errMsg += ` Please open a new issue at ${projectGithub}/issues/new and include this error stack.`;
   }
 
   const err = createError(errMsg);
