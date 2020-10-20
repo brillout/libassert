@@ -5,10 +5,10 @@ type ProjectInfo = {
   projectGithub?: string;
 };
 
-let _projectInfo: ProjectInfo;
+let _projectInfo: ProjectInfo | undefined;
 
 function getProjectInfo(): ProjectInfo {
-  return _projectInfo;
+  return _projectInfo || {};
 }
 function setProjectInfo(projectInfo: ProjectInfo): void {
   _projectInfo = projectInfo;
