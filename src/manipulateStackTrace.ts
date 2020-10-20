@@ -9,27 +9,10 @@ function clean(errStack: string | undefined): string | undefined {
     return errStack;
   }
 
-  const errStackCleaned = errStack
-    .split("\n")
-    .filter((line, i) => {
-      // Is not a stack trace line, e.g. the error message.
-      if (!line.startsWith("    at")) {
-        return true;
-      }
-
+  const errStackCleaned = splitByLine(errStack)
+    .filter((line) => {
       // Remove stack traces related to this package
-      /*
-      if (line.includes("/node_modules/@brillout/assert/")) {
-        return false;
-      }
-      */
-      if (line.startsWith("    at Object.createError") && i === 1) {
-        return false;
-      }
-      if (line.startsWith("    at Object.getUsageError") && i === 2) {
-        return false;
-      }
-      if (line.startsWith("    at Object.assert") && [2, 3].includes(i)) {
+      if (/@brillout.assert/.test(line)) {
         return false;
       }
 
@@ -43,4 +26,9 @@ function clean(errStack: string | undefined): string | undefined {
     .join("\n");
 
   return errStackCleaned;
+}
+
+function splitByLine(str: string): string[] {
+  // https://stackoverflow.com/questions/21895233/how-in-node-to-split-string-by-newline-n
+  return str.split(/\r?\n/);
 }
