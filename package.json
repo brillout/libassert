@@ -1,7 +1,7 @@
 {
   "name": "@brillout/libassert",
   "version": "0.1.0",
-  "description": "Assertions for writing library authors.",
+  "description": "Assertions for library authors.",
   "main": "dist/index.js",
   "scripts": {
     "dev": "npm run build:dev",
