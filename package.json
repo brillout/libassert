@@ -7,7 +7,8 @@
     "dev": "npm run build:dev",
     "build:dev": "tsc --build --watch",
     "build:prod": "tsc --build",
-    "prepublishOnly": "npm run build:prod"
+    "clean": "git clean -Xdf",
+    "prepublishOnly": "npm run clean && npm install && npm run build:prod"
   },
   "devDependencies": {
     "typescript": "^4.0.3"
