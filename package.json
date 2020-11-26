@@ -1,7 +1,7 @@
 {
-  "name": "@brillout/assert",
-  "version": "0.2.5",
-  "description": "Assertion library.",
+  "name": "@brillout/libassert",
+  "version": "0.1.0",
+  "description": "Assertions for library authors.",
   "main": "dist/index.js",
   "scripts": {
     "dev": "npm run build:dev",

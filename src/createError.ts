@@ -25,7 +25,7 @@ function createError(errMsg: string): Error {
 
   if (err.message.includes("\n")) {
     throw new Error(
-      "Following assertion error message contains the new line `\n` character which is prohibited: " +
+      "Following assertion error message contains a new line character `\n` which is prohibited: " +
         err.message
     );
   }
