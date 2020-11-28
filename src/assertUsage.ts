@@ -5,8 +5,11 @@ export { getUsageError };
 
 export type UsageError = Error & { _brand?: "UsageError" };
 
-function assertUsage(assertion: unknown, errorMessage: string): void {
-  if (assertion) {
+function assertUsage(
+  condition: unknown,
+  errorMessage: string
+): asserts condition {
+  if (condition) {
     return;
   }
 

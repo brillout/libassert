@@ -3,8 +3,8 @@ import { getProjectInfo } from "./projectInfo";
 
 export { assert };
 
-function assert(assertion: unknown): void {
-  if (assertion) {
+function assert(condition: unknown): asserts condition {
+  if (condition) {
     return;
   }
 

@@ -2,8 +2,11 @@ import { createError } from "./createError";
 
 export { assertWarning };
 
-function assertWarning(assertion: unknown, errorMessage: string): void {
-  if (assertion) {
+function assertWarning(
+  condition: unknown,
+  errorMessage: string
+): asserts condition {
+  if (condition) {
     return;
   }
 
