@@ -12,7 +12,7 @@ function clean(errStack: string | undefined): string | undefined {
   const errStackCleaned = splitByLine(errStack)
     .filter((line) => {
       // Remove stack traces related to this package
-      if (/@brillout.assert/.test(line)) {
+      if (/@brillout.libassert/.test(line)) {
         return false;
       }
 
