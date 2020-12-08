@@ -2,10 +2,7 @@ import { createError } from "./createError";
 
 export { assertWarning };
 
-function assertWarning(
-  condition: unknown,
-  errorMessage: string
-): asserts condition {
+function assertWarning(condition: unknown, errorMessage: string): void {
   if (condition) {
     return;
   }
