@@ -54,12 +54,3 @@ function assertWarning(condition: unknown, errorMessage: string): void {
 The `createError(errorMessage)` is the same than `new Error(${prefix} ${errorMessage})` except that:
  - `prefix` and `errorMessage` are forbidden to contain new lines.
  - The stack trace is complete but also cleaned to remove useless information.
-
-If your user calls `hello(condition)` and `condition` is falsy then `assertUsage` throws following error:
-
-~~~
-Error: [Awesome Library][Wrong Usage] Missing argument `name`.
-    at main (/home/your-user/app/index.js:249:1)
-~~~
-
-Check the (tiny) source code for more information.
