@@ -12,14 +12,9 @@ function clean(errStack: string | undefined): string | undefined {
   const stackLines = splitByLine(errStack);
 
   const sackLines__cleaned = stackLines
-    .filter((line, i) => {
+    .filter((line) => {
       // Remove stack traces related to this package
       if (isSelf(line)) {
-        return false;
-      }
-
-      // Remove the file that defines the assertion function from the stack trace
-      if (isSelf(stackLines[i + 1])) {
         return false;
       }
 
