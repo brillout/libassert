@@ -24,10 +24,7 @@ function assert(condition: unknown): asserts condition {
   throw err;
 }
 
-function assertUsage(
-  condition: unknown,
-  errorMessage: string
-): asserts condition {
+function assertUsage(condition: unknown, errorMessage: string): asserts condition {
   if (condition) {
     return;
   }
@@ -54,7 +51,11 @@ function assertWarning(condition: unknown, errorMessage: string): void {
 }
 ~~~
 
-If your user calls `hello()` without arguments then `assertUsage` throws following error:
+The `createError(errorMessage)` is the same than `new Error(${prefix} ${errorMessage})` except that:
+ - `prefix` and `errorMessage` are forbidden to contain new lines.
+ - The stack trace is complete but also cleaned to remove useless information.
+
+If your user calls `hello(condition)` and `condition` is falsy then `assertUsage` throws following error:
 
 ~~~
 Error: [Awesome Library][Wrong Usage] Missing argument `name`.
