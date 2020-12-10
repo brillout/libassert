@@ -1,18 +1,53 @@
 Minimalistic & simple assertions for library authors.
 
+Designed so that you can create all kinds of assertion types.
+
 For example:
 
-~~~js
-import { assertUsage, setProjectInfo } from @brillout/libassert;
+~~~ts
+import { createError } from "@brillout/libassert";
 
-export { hello };
+export { assert, assertUsage, assertWarning };
 
-setProjectInfo({
-  projectName: 'Awesome Library',
-});
+const libName = "Awesome Library";
 
-function hello(name) {
-  assertUsage(name, "Missing argument `name`.");
+function assert(condition: unknown): asserts condition {
+  if (condition) {
+    return;
+  }
+
+  const err = createError({ prefix: `[${libName}][Internal Error] Something unexpected happened, please open a GitHub issue.` });
+
+  throw err;
+}
+
+function assertUsage(
+  condition: unknown,
+  errorMessage: string
+): asserts condition {
+  if (condition) {
+    return;
+  }
+
+  const err = createError({
+    prefix: `[${libName}][Wrong Usage]`,
+    errorMessage,
+  });
+
+  throw err;
+}
+
+function assertWarning(condition: unknown, errorMessage: string): void {
+  if (condition) {
+    return;
+  }
+
+  const err = createError({
+    prefix: `[${libName}][Warning]`,
+    errorMessage,
+  });
+
+  console.warn(err);
 }
 ~~~
 
@@ -23,4 +58,4 @@ Error: [Awesome Library][Wrong Usage] Missing argument `name`.
     at main (/home/your-user/app/index.js:249:1)
 ~~~
 
-Check the (small) source code for more information.
+Check the (tiny) source code for more information.

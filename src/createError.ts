@@ -1,23 +1,24 @@
-import { getProjectInfo } from "./projectInfo";
-import { cleanStackTrace } from "./manipulateStackTrace";
+import { cleanStackTrace } from "./cleanStackTrace";
 
 export { createError };
 
-function createError(errMsg: string): Error {
-  let errMsgLine = "";
-
-  const { projectName } = getProjectInfo();
-  if (projectName) {
-    errMsgLine += `[${projectName}]`;
+function createError({
+  prefix,
+  errorMessage,
+}: {
+  prefix: string;
+  errorMessage?: string;
+}): Error {
+  let message = prefix;
+  if (errorMessage) {
+    message = `${message} ${errorMessage}`;
   }
-
-  errMsgLine += errMsg;
 
   let err;
   {
     var stackTraceLimit__original = Error.stackTraceLimit;
     Error.stackTraceLimit = Infinity;
-    err = new Error(errMsgLine);
+    err = new Error(message);
     Error.stackTraceLimit = stackTraceLimit__original;
   }
 

@@ -9,14 +9,21 @@ function clean(errStack: string | undefined): string | undefined {
     return errStack;
   }
 
-  const errStackCleaned = splitByLine(errStack)
-    .filter((line) => {
+  const stackLines = splitByLine(errStack);
+
+  const sackLines__cleaned = stackLines
+    .filter((line, i) => {
       // Remove stack traces related to this package
-      if (/@brillout.libassert/.test(line)) {
+      if (isSelf(line)) {
         return false;
       }
 
-      // Remove useless internal stack traces
+      // Remove the file that defines the assertion function from the stack trace
+      if (isSelf(stackLines[i + 1])) {
+        return false;
+      }
+
+      // Remove internal stack traces
       if (line.includes(" (internal/")) {
         return false;
       }
@@ -25,7 +32,11 @@ function clean(errStack: string | undefined): string | undefined {
     })
     .join("\n");
 
-  return errStackCleaned;
+  return sackLines__cleaned;
+}
+
+function isSelf(stackLine: string): boolean {
+  return /@brillout.libassert/.test(stackLine);
 }
 
 function splitByLine(str: string): string[] {
