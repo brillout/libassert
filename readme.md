@@ -16,7 +16,10 @@ function assert(condition: unknown): asserts condition {
     return;
   }
 
-  const err = createError({ prefix: `[${libName}][Internal Error] Something unexpected happened, please open a GitHub issue.` });
+  const prefix =
+  `[${libName}][Internal Error] Something unexpected happened, `+
+  `please open a GitHub issue.`;
+  const err = createError({ prefix });
 
   throw err;
 }
