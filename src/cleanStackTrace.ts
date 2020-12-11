@@ -11,10 +11,16 @@ function clean(errStack: string | undefined): string | undefined {
 
   const stackLines = splitByLine(errStack);
 
-  const sackLines__cleaned = stackLines
-    .filter((line) => {
+  const stackLine__cleaned = stackLines
+    .filter((line, i) => {
       // Remove stack traces related to this package
       if (isSelf(line)) {
+        return false;
+      }
+
+      // Remove the definition of the assert function
+      const previousLine = stackLines[i - 1];
+      if (isSelf(previousLine)) {
         return false;
       }
 
@@ -27,7 +33,7 @@ function clean(errStack: string | undefined): string | undefined {
     })
     .join("\n");
 
-  return sackLines__cleaned;
+  return stackLine__cleaned;
 }
 
 function isSelf(stackLine: string): boolean {
