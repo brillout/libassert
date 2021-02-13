@@ -7,7 +7,7 @@ Tiny zero-dependency tool for library authors to create assertion functions with
 - Error messages are guaranteed to not contain new lines.
 
 ```ts
-import { createError } from "@brillout/libassert";
+import { newError } from "@brillout/libassert";
 
 export { assert };
 
@@ -16,24 +16,23 @@ function assert(condition: unknown): asserts condition {
     return;
   }
 
-  const prefix =
-    `[My Awesome Library][Internal Error] Something unexpected happened, ` +
-    `please open a GitHub issue.`;
-  const err = createError({ prefix });
+  const err = newError(
+    `[${libName}][Internal Error] Something unexpected happened, please open a GitHub issue.`;
+  );
 
   throw err;
 }
 ```
 
-Calling `createError(errorMessage)` is the same than `new Error(${prefix} ${errorMessage})` except that:
+Calling `newError(errorMessage)` is the same than `new Error(errorMessage)` except that:
 
-- `prefix` and `errorMessage` are forbidden to contain new lines.
 - The stack trace is complete and cleaned as described above.
+- `errorMessage` is forbidden to contain new lines.
 
 You can create all kinds of assertion functions, such as `assertUsage` or `assertWarning`:
 
 ```ts
-import { createError } from "@brillout/libassert";
+import { newError } from "@brillout/libassert";
 
 export { assert, assertUsage, assertWarning };
 
@@ -45,10 +44,9 @@ function assert(condition: unknown): asserts condition {
     return;
   }
 
-  const prefix =
-    `[${libName}][Internal Error] Something unexpected happened, ` +
-    `please open a GitHub issue.`;
-  const err = createError({ prefix });
+  const err = newError(
+    `[${libName}][Internal Error] Something unexpected happened, please open a GitHub issue.`;
+  );
 
   throw err;
 }
@@ -62,10 +60,7 @@ function assertUsage(
     return;
   }
 
-  const err = createError({
-    prefix: `[${libName}][Wrong Usage]`,
-    errorMessage,
-  });
+  const err = newError(prefix: `[${libName}][Wrong Usage] ${errorMessage}`);
 
   throw err;
 }
@@ -77,10 +72,7 @@ function assertWarning(condition: unknown, errorMessage: string): void {
     return;
   }
 
-  const err = createError({
-    prefix: `[${libName}][Warning]`,
-    errorMessage,
-  });
+  const err = newError(`[${libName}][Warning] ${errorMessage}`);
 
   console.warn(err);
 }

@@ -1,1 +1,1 @@
-export { createError } from "./createError";
+export { newError } from "./newError";
