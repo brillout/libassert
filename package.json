@@ -1,15 +1,17 @@
 {
   "name": "@brillout/libassert",
-  "version": "0.2.2",
   "description": "Assertions for library authors.",
+  "version": "0.2.2",
   "main": "dist/index.js",
+  "// Zero dependencies": "",
+  "dependencies": {},
   "scripts": {
-    "dev": "npm run build:watch",
-    "build": "npm run build:once",
-    "build:watch": "tsc --build --watch",
-    "build:once": "tsc --build",
+    "dev": "npm run tsc:watch",
+    "build": "npm run tsc:once",
+    "tsc:watch": "tsc --build --watch",
+    "tsc:once": "tsc --build",
     "clean": "git clean -Xdf",
-    "prepublishOnly": "npm run clean && npm install && npm run build:once"
+    "prepublishOnly": "npm run clean && npm install && npm run build"
   },
   "devDependencies": {
     "@types/node": "^14.11.2",
