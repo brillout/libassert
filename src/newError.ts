@@ -2,8 +2,10 @@ import { cleanStackTrace } from "./cleanStackTrace";
 
 export { newError };
 
-function newError(errorMessage: string){
-
+function newError(
+  errorMessage: string,
+  numberOfStackTraceLinesToRemove: number
+) {
   if (errorMessage.includes("\n")) {
     throw new Error(
       "Following error message contains a new line character `\n` which is prohibited: " +
@@ -19,7 +21,7 @@ function newError(errorMessage: string){
     Error.stackTraceLimit = stackTraceLimit__original;
   }
 
-  cleanStackTrace(err);
+  cleanStackTrace(err, numberOfStackTraceLinesToRemove);
 
   return err;
 }

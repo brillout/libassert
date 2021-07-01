@@ -1,10 +1,16 @@
 export { cleanStackTrace };
 
-function cleanStackTrace(err: Error): void {
-  err.stack = clean(err.stack);
+function cleanStackTrace(
+  err: Error,
+  numberOfStackTraceLinesToRemove: number
+): void {
+  err.stack = clean(err.stack, numberOfStackTraceLinesToRemove);
 }
 
-function clean(errStack: string | undefined): string | undefined {
+function clean(
+  errStack: string | undefined,
+  numberOfStackTraceLinesToRemove: number
+): string | undefined {
   if (!errStack) {
     return errStack;
   }
@@ -12,18 +18,7 @@ function clean(errStack: string | undefined): string | undefined {
   const stackLines = splitByLine(errStack);
 
   const stackLine__cleaned = stackLines
-    .filter((line, i) => {
-      // Remove stack traces related to this package
-      if (isSelf(line)) {
-        return false;
-      }
-
-      // Remove the definition of the assert function
-      const previousLine = stackLines[i - 1];
-      if (isSelf(previousLine)) {
-        return false;
-      }
-
+    .filter((line) => {
       // Remove internal stack traces
       if (line.includes(" (internal/")) {
         return false;
@@ -31,13 +26,10 @@ function clean(errStack: string | undefined): string | undefined {
 
       return true;
     })
+    .slice(numberOfStackTraceLinesToRemove)
     .join("\n");
 
   return stackLine__cleaned;
-}
-
-function isSelf(stackLine: string): boolean {
-  return /@brillout.libassert/.test(stackLine);
 }
 
 function splitByLine(str: string): string[] {
