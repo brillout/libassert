@@ -41,7 +41,7 @@ function clean(
 }
 
 function isStackTraceLine(line: string): boolean {
-  return line.split(" ").filter(Boolean).join("").startsWith("at");
+  return line.startsWith('    at ')
 }
 
 function splitByLine(str: string): string[] {
