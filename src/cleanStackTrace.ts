@@ -17,19 +17,31 @@ function clean(
 
   const stackLines = splitByLine(errStack);
 
+  let linesRemoved = 0;
+
   const stackLine__cleaned = stackLines
     .filter((line) => {
       // Remove internal stack traces
       if (line.includes(" (internal/")) {
         return false;
       }
+      if (
+        linesRemoved < numberOfStackTraceLinesToRemove &&
+        isStackTraceLine(line)
+      ) {
+        linesRemoved++;
+        return false;
+      }
 
       return true;
     })
-    .slice(numberOfStackTraceLinesToRemove)
     .join("\n");
 
   return stackLine__cleaned;
+}
+
+function isStackTraceLine(line: string): boolean {
+  return line.split(" ").filter(Boolean).join("").startsWith("at");
 }
 
 function splitByLine(str: string): string[] {
