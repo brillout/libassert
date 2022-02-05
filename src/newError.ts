@@ -6,13 +6,6 @@ function newError(
   errorMessage: string,
   numberOfStackTraceLinesToRemove: number
 ) {
-  if (errorMessage.includes("\n")) {
-    throw new Error(
-      "Following error message contains a new line character `\n` which is prohibited: " +
-        errorMessage
-    );
-  }
-
   let err;
   {
     var stackTraceLimit__original = Error.stackTraceLimit;
