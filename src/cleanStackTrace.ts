@@ -22,7 +22,7 @@ function clean(
   const stackLine__cleaned = stackLines
     .filter((line) => {
       // Remove internal stack traces
-      if (line.includes(" (internal/")) {
+      if (line.includes(" (internal/") || line.includes(" (node:internal")) {
         return false;
       }
       if (

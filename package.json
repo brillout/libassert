@@ -1,7 +1,7 @@
 {
   "name": "@brillout/libassert",
   "description": "Assertions for library authors.",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "exports": {
